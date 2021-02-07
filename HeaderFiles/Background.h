@@ -29,9 +29,9 @@ namespace avt {
 		void setColor(const Vector3& color) {
 			_color = color;
 			for (int i = 0; i < 4 * 6; i += 6) {
-				QUAD_STRIP[i + 3] = color.x();
-				QUAD_STRIP[i + 4] = color.y();
-				QUAD_STRIP[i + 5] = color.z();
+				QUAD_STRIP[i + 3] = color.x;
+				QUAD_STRIP[i + 4] = color.y;
+				QUAD_STRIP[i + 5] = color.z;
 			}
 
 			_vb.fill(QUAD_STRIP, sizeof(QUAD_STRIP));

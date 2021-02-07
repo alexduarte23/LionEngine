@@ -81,8 +81,8 @@ namespace avt {
 
 	Vector2 Mat2::operator*(const Vector2& vec) const {
 		Vector2 newV;
-		newV.setX(_cells[0] * vec.x() + _cells[1] * vec.y());
-		newV.setY(_cells[2] * vec.x() + _cells[3] * vec.y());
+		newV.x = _cells[0] * vec.x + _cells[2] * vec.y;
+		newV.y = _cells[1] * vec.x + _cells[3] * vec.y;
 
 		return newV;
 	}

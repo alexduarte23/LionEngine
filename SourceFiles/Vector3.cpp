@@ -8,26 +8,26 @@
 namespace avt {
 
 	Vector3::Vector3(const Vector2& vec, float z)
-		: _x(vec.x()), _y(vec.y()), _z(z) {}
+		: x(vec.x), y(vec.y), z(z) {}
 
 	float Vector3::dot(const Vector3& vec) const {
-		return _x * vec.x() + _y * vec.y() + _z * vec.z();
+		return x * vec.x + y * vec.y + z * vec.z;
 	}
 
 	Vector3 Vector3::cross(const Vector3& vec) const {
-		float x = _y * vec.z() - _z * vec.y();
-		float y = _z * vec.x() - _x * vec.z();
-		float z = _x * vec.y() - _y * vec.x();
+		float newX = y * vec.z - z * vec.y;
+		float newY = z * vec.x - x * vec.z;
+		float newZ = x * vec.y - y * vec.x;
 
-		return Vector3(x, y, z);
+		return Vector3(newX, newY, newZ);
 	}
 
 	float Vector3::length() const {
-		return std::sqrt(_x * _x + _y * _y + _z * _z);
+		return std::sqrt(x * x + y * y + z * z);
 	}
 
 	float Vector3::quadrance() const {
-		return _x * _x + _y * _y + _z * _z;
+		return x * x + y * y + z * z;
 	}
 
 	Vector3 Vector3::normalized() const {
@@ -45,11 +45,11 @@ namespace avt {
 	}
 
 	Vector3 Vector3::pow(float exp) const {
-		return Vector3(std::pow(_x, exp), std::pow(_y, exp), std::pow(_z, exp));
+		return Vector3(std::pow(x, exp), std::pow(y, exp), std::pow(z, exp));
 	}
 
 	float Vector3::distanceTo(const Vector3& vec) const {
-		Vector3 newV(vec.x() - _x, vec.y() - _y, vec.z() - _z);
+		Vector3 newV(vec.x - x, vec.y - y, vec.z - z);
 		return newV.length();
 	}
 
@@ -64,27 +64,27 @@ namespace avt {
 	}
 
 	Vector3 Vector3::operator+() const {
-		return Vector3(_x, _y, _z);
+		return Vector3(x, y, z);
 	}
 
 	Vector3 Vector3::operator-() const {
-		return Vector3(-_x, -_y, -_z);
+		return Vector3(-x, -y, -z);
 	}
 
 	Vector3 Vector3::operator+(const Vector3& vec) const {
-		return Vector3(_x + vec.x(), _y + vec.y(), _z + vec.z());
+		return Vector3(x + vec.x, y + vec.y, z + vec.z);
 	}
 
 	Vector3 Vector3::operator+(float num) const {
-		return Vector3(_x + num, _y + num, _z + num);
+		return Vector3(x + num, y + num, z + num);
 	}
 
 	bool Vector3::operator==(const Vector3& vec) const {
-		return _x == vec.x() && _y == vec.y() && _z == vec.z();
+		return x == vec.x && y == vec.y && z == vec.z;
 	}
 
 	bool Vector3::operator!=(const Vector3& vec) const {
-		return _x != vec.x() || _y != vec.y() || _z != vec.z();
+		return x != vec.x || y != vec.y || z != vec.z;
 	}
 
 	float Vector3::operator*(const Vector3& vec) const {
@@ -92,94 +92,94 @@ namespace avt {
 	}
 
 	Vector3 Vector3::operator*(float num) const {
-		return Vector3(_x * num, _y * num, _z * num);
+		return Vector3(x * num, y * num, z * num);
 	}
 
 
 	Vector3 Vector3::operator-(const Vector3& vec) const {
-		return Vector3(_x - vec.x(), _y - vec.y(), _z - vec.z());
+		return Vector3(x - vec.x, y - vec.y, z - vec.z);
 	}
 
 	Vector3 Vector3::operator-(float num) const {
-		return Vector3(_x - num, _y - num, _z - num);
+		return Vector3(x - num, y - num, z - num);
 	}
 
 	Vector3& Vector3::operator+=(const Vector3& vec) {
-		_x += vec.x();
-		_y += vec.y();
-		_z += vec.z();
+		x += vec.x;
+		y += vec.y;
+		z += vec.z;
 		return *this;
 	}
 
 	Vector3& Vector3::operator+=(float num) {
-		_x += num;
-		_y += num;
-		_z += num;
+		x += num;
+		y += num;
+		z += num;
 		return *this;
 	}
 
 	Vector3& Vector3::operator-=(const Vector3& vec) {
-		_x -= vec.x();
-		_y -= vec.y();
-		_z -= vec.z();
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
 		return *this;
 	}
 
 	Vector3& Vector3::operator-=(float num) {
-		_x -= num;
-		_y -= num;
-		_z -= num;
+		x -= num;
+		y -= num;
+		z -= num;
 		return *this;
 	}
 
 	Vector3& Vector3::operator*=(const Vector3& vec) {
-		_x *= vec.x();
-		_y *= vec.y();
-		_z *= vec.z();
+		x *= vec.x;
+		y *= vec.y;
+		z *= vec.z;
 		return *this;
 	}
 
 	Vector3& Vector3::operator*=(float num) {
-		_x *= num;
-		_y *= num;
-		_z *= num;
+		x *= num;
+		y *= num;
+		z *= num;
 		return *this;
 	}
 
 	Vector3& Vector3::operator/=(float num) {
-		_x /= num;
-		_y /= num;
-		_z /= num;
+		x /= num;
+		y /= num;
+		z /= num;
 		return *this;
 	}
 
 	Vector3 Vector3::operator/(float num) const {
-		return Vector3(_x / num, _y / num, _z / num);
+		return Vector3(x / num, y / num, z / num);
 	}
 
 	Vector3& Vector3::operator=(const Vector3& vec) {
-		_x = vec.x();
-		_y = vec.y();
-		_z = vec.z();
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
 		return *this;
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vector3& vec) {
-		os << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ")";
+		os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
 		return os;
 	}
 
 	std::istream& operator>>(std::istream& is, Vector3& vec) {
-		is >> vec._x >> vec._y >> vec._z;
+		is >> vec.x >> vec.y >> vec.z;
 		return is;
 	}
 
 	Vector2 Vector3::to2D() const {
-		return Vector2(_x, _y);
+		return Vector2(x, y);
 	}
 
 	Vector4 Vector3::to4D(float w) const {
-		return Vector4(_x, _y, _z, w);
+		return Vector4(x, y, z, w);
 	}
 
 

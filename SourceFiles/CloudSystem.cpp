@@ -88,7 +88,7 @@ namespace avt {
 
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
-				float p = Perlin::perlin(perlinSpacing * n / 2 - gridPoint.x() + i * perlinSpacing, perlinSpacing * m / 2 - gridPoint.y() + j * perlinSpacing);
+				float p = Perlin::perlin(perlinSpacing * n / 2 - gridPoint.x + i * perlinSpacing, perlinSpacing * m / 2 - gridPoint.y + j * perlinSpacing);
 				p = p / 2.f + .5f;
 				p = p < threshold ? 0 : (p - threshold) / (1 - threshold);
 				p = p > 0.6f ? 0.6f : p;
@@ -99,7 +99,7 @@ namespace avt {
 				//if (p > 0) std::cout << p << std::endl;
 				if (p == 0) continue;
 
-				auto& cell = grid[(int)start.x() + i][(int)start.y() + j];
+				auto& cell = grid[(int)start.x + i][(int)start.y + j];
 				float pulseOffset = randrange(0, 2 * PI);
 				float wobbleOffset = randrange(0, 2 * PI);
 				if (cell.size == 0) cell = { p, -p, lifetime, pulseOffset, wobbleOffset };

@@ -151,8 +151,8 @@ namespace avt {
 			glfwPollEvents();
 			glfwGetCursorPos(_win, &xcursor, &ycursor);
 			_app->pollEventsCallback(_win, lastCursor, {(float)xcursor, (float)ycursor}, elapsed_time);
-			lastCursor.setX((float)xcursor);
-			lastCursor.setY((float)ycursor);
+			lastCursor.x = (float)xcursor;
+			lastCursor.y = (float)ycursor;
 
 			_app->updateCallback(_win, elapsed_time);
 			_app->displayCallback(_win, elapsed_time);

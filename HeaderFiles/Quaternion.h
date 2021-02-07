@@ -5,55 +5,23 @@
 
 namespace avt {
 
-	class Vector3;
-	class Vector4;
+	struct Vector3;
+	struct Vector4;
 	class Mat4;
 
-	class Quaternion {
+	struct Quaternion {
 	private:
-		float _t, _x, _y, _z;
-
 		static constexpr float THRESHOLD = (float)1.0e-5;
 
 	public:
+		float t, x, y, z;
+
 		Quaternion(float t=0, float x=0, float y=0, float z=0) 
-			: _t(t), _x(x), _y(y), _z(z) {}
+			: t(t), x(x), y(y), z(z) {}
 
 		Quaternion(Vector3 axis, float rad);
 
 		~Quaternion() {}
-
-		const float t() const {
-			return _t;
-		}
-
-		const float x() const {
-			return _x;
-		}
-
-		const float y() const {
-			return _y;
-		}
-
-		const float z() const {
-			return _z;
-		}
-
-		float& t() {
-			return _t;
-		}
-
-		float& x() {
-			return _x;
-		}
-
-		float& y() {
-			return _y;
-		}
-
-		float& z() {
-			return _z;
-		}
 
 
 		Vector3 getAxis() const;
@@ -105,7 +73,7 @@ namespace avt {
 		bool operator!=(const Quaternion& q1) const;
 
 		friend std::ostream& operator<<(std::ostream& os, const Quaternion& q) {
-			os << "(" << q.t() << ", " << q.x() << ", " << q.y() << ", " << q.z() << ")" << std::endl;
+			os << "(" << q.t << ", " << q.x << ", " << q.y << ", " << q.z << ")" << std::endl;
 			return os;
 		}
 

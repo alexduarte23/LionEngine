@@ -253,22 +253,22 @@ private:
 	void processKeyInput(GLFWwindow* win, double dt) {
 		avt::Vector3 move;
 		if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) {
-			move.setZ(move.z() + 1);
+			move.z += 1;
 		}
 		if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS) {
-			move.setZ(move.z() - 1);
+			move.z -= 1;
 		}
 		if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS) {
-			move.setX(move.x() - 1);
+			move.x -= 1;
 		}
 		if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS) {
-			move.setX(move.x() + 1);
+			move.x += 1;
 		}
 		if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			move.setY(move.y() + 1);
+			move.y += 1;
 		}
 		if (glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-			move.setY(move.y() - 1);
+			move.y -= 1;
 		}
 
 		_cams.get("ort")->processMove(move, dt);
@@ -588,13 +588,13 @@ public:
 		avt::Vector3 camPos = _cams.get(_activeCam)->position();
 
 		_shader.bind();
-		glUniform3f(_shader.getUniform("EyePosition"), camPos.x(), camPos.y(), camPos.z());
-		glUniform3f(_shader.getUniform("AmbientColor"), ambient.x()*ambientStrength, ambient.y() * ambientStrength, ambient.z() * ambientStrength);
+		glUniform3f(_shader.getUniform("EyePosition"), camPos.x, camPos.y, camPos.z);
+		glUniform3f(_shader.getUniform("AmbientColor"), ambient.x*ambientStrength, ambient.y * ambientStrength, ambient.z * ambientStrength);
 		_shader.unbind();
 		
 		_shaderClouds.bind();
-		glUniform3f(_shaderClouds.getUniform("EyePosition"), camPos.x(), camPos.y(), camPos.z());
-		glUniform3f(_shaderClouds.getUniform("AmbientColor"), ambient.x() * ambientStrength, ambient.y() * ambientStrength, ambient.z() * ambientStrength);
+		glUniform3f(_shaderClouds.getUniform("EyePosition"), camPos.x, camPos.y, camPos.z);
+		glUniform3f(_shaderClouds.getUniform("AmbientColor"), ambient.x * ambientStrength, ambient.y * ambientStrength, ambient.z * ambientStrength);
 		_shaderClouds.unbind();
 		
 	}

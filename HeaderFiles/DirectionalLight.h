@@ -32,7 +32,7 @@ namespace avt {
 
 		void updateLightSpaceMatrices(Shader& shader, GLuint lsmuniform) {
 			shader.bind();
-			glUniformMatrix4fv(lsmuniform, 1, GL_FALSE, (shadow._lightView.projMatrix() * shadow._lightView.viewMatrix()).GLdata());
+			glUniformMatrix4fv(lsmuniform, 1, GL_FALSE, (shadow._lightView.projMatrix() * shadow._lightView.viewMatrix()).data());
 			shader.unbind();
 		}
 

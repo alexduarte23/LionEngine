@@ -53,11 +53,11 @@ namespace avt {
 
 		void updateLightSpaceMatrices(Shader& shader, GLuint xplus, GLuint xminus, GLuint zplus, GLuint zminus, GLuint down) {
 			shader.bind();
-			glUniformMatrix4fv(xplus, 1, GL_FALSE, (shadowXplus._lightView.projMatrix() * shadowXplus._lightView.viewMatrix()).GLdata());
-			glUniformMatrix4fv(xminus, 1, GL_FALSE, (shadowXminus._lightView.projMatrix() * shadowXminus._lightView.viewMatrix()).GLdata());
-			glUniformMatrix4fv(zplus, 1, GL_FALSE, (shadowZplus._lightView.projMatrix() * shadowZplus._lightView.viewMatrix()).GLdata());
-			glUniformMatrix4fv(zminus, 1, GL_FALSE, (shadowZminus._lightView.projMatrix() * shadowZminus._lightView.viewMatrix()).GLdata());
-			glUniformMatrix4fv(down, 1, GL_FALSE, (shadowDown._lightView.projMatrix() * shadowDown._lightView.viewMatrix()).GLdata());
+			glUniformMatrix4fv(xplus, 1, GL_FALSE, (shadowXplus._lightView.projMatrix() * shadowXplus._lightView.viewMatrix()).data());
+			glUniformMatrix4fv(xminus, 1, GL_FALSE, (shadowXminus._lightView.projMatrix() * shadowXminus._lightView.viewMatrix()).data());
+			glUniformMatrix4fv(zplus, 1, GL_FALSE, (shadowZplus._lightView.projMatrix() * shadowZplus._lightView.viewMatrix()).data());
+			glUniformMatrix4fv(zminus, 1, GL_FALSE, (shadowZminus._lightView.projMatrix() * shadowZminus._lightView.viewMatrix()).data());
+			glUniformMatrix4fv(down, 1, GL_FALSE, (shadowDown._lightView.projMatrix() * shadowDown._lightView.viewMatrix()).data());
 			shader.unbind();
 		}
 

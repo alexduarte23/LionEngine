@@ -132,8 +132,8 @@ namespace avt {
 			if (p->age < 0) continue;
 			p->s += p->v * dt;
 			p->age += dt;
-			if (p->age < p->lifetime / 4.0) p->color.setW(p->age / p->lifetime / .25f);
-			if (p->age > p->lifetime / 2) p->color.setW(2 - 2 * p->age / p->lifetime);
+			if (p->age < p->lifetime / 4.0) p->color.w =p->age / p->lifetime / .25f;
+			if (p->age > p->lifetime / 2) p->color.w =2 - 2 * p->age / p->lifetime;
 		}
 	}
 
@@ -150,9 +150,9 @@ namespace avt {
 		Particle p;
 		if (!_r && !_h) { // box
 			p.s = Vector3(
-				randrange(-_box.x() / 2, _box.x() / 2),
-				randrange(-_box.y() / 2, _box.y() / 2),
-				randrange(-_box.z() / 2, _box.z() / 2));
+				randrange(-_box.x / 2, _box.x / 2),
+				randrange(-_box.y / 2, _box.y / 2),
+				randrange(-_box.z / 2, _box.z / 2));
 		}
 		else { // cylinder
 			float radius = randrange(0, _r), angle = randrange(0, 2*PI);
@@ -171,7 +171,7 @@ namespace avt {
 
 		p.initialColor = { .5f,.5f,.5f,randrange(.1f, .7f) };
 		p.color = p.initialColor;
-		p.color.setW(0);
+		p.color.w = 0;
 		p.lifetime = randrange(4.f, 8.f);
 
 		addParticle(p);
@@ -182,9 +182,9 @@ namespace avt {
 			if (p->age < 0) continue;
 			p->s += p->v * dt;
 			p->age += dt;
-			if (p->age < 2.f) p->color.setW(p->initialColor.w() / 2.f * p->age);
-			else if (p->age > p->lifetime - 2.f) p->color.setW(-p->initialColor.w()/2.f*p->age + p->initialColor.w() + p->initialColor.w()/2.f*(p->lifetime-2.f));
-			else p->color.setW(p->initialColor.w());
+			if (p->age < 2.f) p->color.w = p->initialColor.w / 2.f * p->age;
+			else if (p->age > p->lifetime - 2.f) p->color.w = -p->initialColor.w/2.f*p->age + p->initialColor.w + p->initialColor.w/2.f*(p->lifetime-2.f);
+			else p->color.w = p->initialColor.w;
 		}
 	}
 
@@ -201,9 +201,9 @@ namespace avt {
 		Particle p;
 		if (!_r && !_h) { // box
 			p.s = Vector3(
-				randrange(-_box.x() / 2, _box.x() / 2),
-				randrange(-_box.y() / 2, _box.y() / 2),
-				randrange(-_box.z() / 2, _box.z() / 2));
+				randrange(-_box.x / 2, _box.x / 2),
+				randrange(-_box.y / 2, _box.y / 2),
+				randrange(-_box.z / 2, _box.z / 2));
 		}
 		else { // cylinder
 			float radius = randrange(0, _r), angle = randrange(0, 2 * PI);
@@ -278,7 +278,7 @@ namespace avt {
 			p->age += dt;
 			if (p->age > p->lifetime) p->age = p->lifetime;
 
-			if (p->age > K1) p->color.setW(1 - (p->age - K1) / (p->lifetime - K1));
+			if (p->age > K1) p->color.w = 1 - (p->age - K1) / (p->lifetime - K1);
 
 			if (p->age < K2) p->size = p->initialSize / K2 * p->age;
 			else p->size = p->initialSize;
@@ -298,9 +298,9 @@ namespace avt {
 			//p->v += p->a * dt;
 			p->s += p->v * dt;
 			p->age += dt;
-			if (p->age < 2.f) p->color.setW(p->initialColor.w() / 2.f * p->age);
-			else if (p->age > p->lifetime - 2.f) p->color.setW(-p->initialColor.w() / 2.f * p->age + p->initialColor.w() + p->initialColor.w() / 2.f * (p->lifetime - 2.f));
-			else p->color.setW(p->initialColor.w());
+			if (p->age < 2.f) p->color.setW(p->initialColor.w / 2.f * p->age);
+			else if (p->age > p->lifetime - 2.f) p->color.setW(-p->initialColor.w / 2.f * p->age + p->initialColor.w + p->initialColor.w / 2.f * (p->lifetime - 2.f));
+			else p->color.setW(p->initialColor.w);
 			*/
 		}
 	}

@@ -7,61 +7,24 @@
 
 namespace avt {
 
-	class Vector2;
-	class Vector3;
+	struct Vector2;
+	struct Vector3;
 
-	class Vector4 {
-	private:
-		float _x, _y, _z, _w;
-
+	struct Vector4 {
 	public:
+		float x, y, z, w;
+
 		Vector4(float x = 0, float y = 0, float z = 0, float w = 0)
-			: _x(x), _y(y), _z(z), _w(w) {}
+			: x(x), y(y), z(z), w(w) {}
 
 		Vector4(const Vector4& vec)
-			: _x(vec.x()), _y(vec.y()), _z(vec.z()), _w(vec.w()) {}
+			: x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
 
 		Vector4(const Vector2& vec, float z = 0, float w = 0);
 
 		Vector4(const Vector3& vec, float w = 0);
 
 		~Vector4() {}
-
-		float x() const {
-			return _x;
-		}
-
-		float y() const {
-			return _y;
-		}
-
-		float z() const {
-			return _z;
-		}
-
-		float w() const {
-			return _w;
-		}
-
-		void setX(float x) {
-			_x = x;
-		}
-
-		void setY(float y) {
-			_y = y;
-		}
-
-		void setZ(float z) {
-			_z = z;
-		}
-
-		void setW(float w) {
-			_w = w;
-		}
-
-		Vector4 clone() const {
-			return Vector4(_x, _y, _z, _w);
-		}
 
 		Vector4& operator=(const Vector4& vec);
 

@@ -92,7 +92,7 @@ namespace avt {
 				return;
 			}
 			_depthShader.bind();
-			glUniformMatrix4fv(_depthShader.getUniform("lightSpaceMatrix"), 1, GL_FALSE, (_lightView.projMatrix() * _lightView.viewMatrix()).GLdata());
+			glUniformMatrix4fv(_depthShader.getUniform("lightSpaceMatrix"), 1, GL_FALSE, (_lightView.projMatrix() * _lightView.viewMatrix()).data());
 
 			glViewport(0, 0, _shadowWidth, _shadowHeight);
 			glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);

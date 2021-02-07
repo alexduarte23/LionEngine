@@ -14,6 +14,7 @@
 #define max(a, b) (a > b ? a : b)
 #define min(a, b) (a > b ? b : a)
 #define clamp(v, b1, b2) min(max(v, b1), b2)
+#define lerp(a, b, k) ((b - a) * k + a)
 
 namespace avt {
 
@@ -45,9 +46,9 @@ namespace avt {
 
 	// Vectors
 
-	class Vector2;
-	class Vector3;
-	class Vector4;
+	struct Vector2;
+	struct Vector3;
+	struct Vector4;
 
 
 	// Matrices
@@ -60,6 +61,6 @@ namespace avt {
 	class Mat4;
 
 	// Quaternions
-	class Quaternion;
+	struct Quaternion;
 
 }

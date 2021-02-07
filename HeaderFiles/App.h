@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 namespace avt {
-	class Vector2;
+	struct Vector2;
 
 	class App {
 	public:

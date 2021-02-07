@@ -4,7 +4,7 @@
 
 namespace avt {
 
-	class Vector3;
+	struct Vector3;
 
 	class Mat3 : public Matrix<3> {
 	public:

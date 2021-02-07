@@ -5,8 +5,6 @@
 #include <initializer_list>
 #include <array>
 
-#include <GL/glew.h>
-
 
 namespace avt {
 
@@ -59,10 +57,6 @@ namespace avt {
 			float* arr = new double[N * N];
 			std::copy_n(_cells, LEN, arr);
 			return arr;
-		}
-
-		GLfloat* GLdata() const {
-			return _cells;
 		}
 
 		float at(int row, int col) const {

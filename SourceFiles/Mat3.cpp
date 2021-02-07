@@ -86,9 +86,9 @@ namespace avt {
 	}
 
 	Vector3 Mat3::operator*(const Vector3& vec) const {
-		float x = _cells[0] * vec.x() + _cells[3] * vec.y() + _cells[6] * vec.z();
-		float y = _cells[1] * vec.x() + _cells[4] * vec.y() + _cells[7] * vec.z();
-		float z = _cells[2] * vec.x() + _cells[5] * vec.y() + _cells[8] * vec.z();
+		float x = _cells[0] * vec.x + _cells[3] * vec.y + _cells[6] * vec.z;
+		float y = _cells[1] * vec.x + _cells[4] * vec.y + _cells[7] * vec.z;
+		float z = _cells[2] * vec.x + _cells[5] * vec.y + _cells[8] * vec.z;
 
 		return Vector3(x, y, z);
 	}
@@ -244,7 +244,7 @@ namespace avt {
 	}
 
 	Mat3 Mat3::dual(Vector3 vec) {
-		return Mat3{ 0, vec.z(), -vec.y(), -vec.z(), 0, vec.x(), vec.y(), -vec.x(), 0 };
+		return Mat3{ 0, vec.z, -vec.y, -vec.z, 0, vec.x, vec.y, -vec.x, 0 };
 	}
 
 }

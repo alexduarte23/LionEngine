@@ -41,8 +41,8 @@ namespace avt {
 
 		void updateLight(Shader& shader, GLuint lightPositionUniform, GLuint lightColorUniform) {
 			shader.bind();
-			glUniform3f(lightPositionUniform, _pos.x(), _pos.y(), _pos.z());
-			glUniform3f(lightColorUniform, _color.x()*_intensity, _color.y()*_intensity, _color.z()*_intensity);
+			glUniform3f(lightPositionUniform, _pos.x, _pos.y, _pos.z);
+			glUniform3f(lightColorUniform, _color.x*_intensity, _color.y*_intensity, _color.z*_intensity);
 			shader.unbind();
 		}
 	};

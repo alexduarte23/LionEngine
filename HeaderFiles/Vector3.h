@@ -6,51 +6,21 @@
 
 namespace avt {
 
-	class Vector2;
-	class Vector4;
+	struct Vector2;
+	struct Vector4;
 
-	class Vector3 {
-	private:
-		float _x, _y, _z;
+	struct Vector3 {
+		float x, y, z;
 
-	public:
 		Vector3(float x = 0, float y = 0, float z = 0)
-			: _x(x), _y(y), _z(z) {}
+			: x(x), y(y), z(z) {}
 
 		Vector3(const Vector3& vec)
-			: _x(vec.x()), _y(vec.y()), _z(vec.z()) {}
+			: x(vec.x), y(vec.y), z(vec.z) {}
 
 		Vector3(const Vector2& vec, float z = 0);
 
 		~Vector3() {}
-
-		float x() const {
-			return _x;
-		}
-
-		float y() const {
-			return _y;
-		}
-
-		float z() const {
-			return _z;
-		}
-
-		void setX(float x) {
-			_x = x;
-		}
-
-		void setY(float y) {
-			_y = y;
-		}
-
-		void setZ(float z) {
-			_z = z;
-		}
-
-		Vector3 clone() const {
-			return Vector3(_x, _y, _z);
-		}
 
 		Vector3& operator=(const Vector3& vec);
 

@@ -7,21 +7,21 @@
 namespace avt {
 
 	Vector4::Vector4(const Vector2& vec, float z, float w)
-		: _x(vec.x()), _y(vec.y()), _z(z), _w(w) {}
+		: x(vec.x), y(vec.y), z(z), w(w) {}
 
 	Vector4::Vector4(const Vector3& vec, float w)
-		: _x(vec.x()), _y(vec.y()), _z(vec.z()), _w(w) {}
+		: x(vec.x), y(vec.y), z(vec.z), w(w) {}
 
 	float Vector4::dot(const Vector4& vec) const {
-		return _x * vec.x() + _y * vec.y() + _z * vec.z() + _w * vec.w();
+		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
 	}
 
 	float Vector4::length() const {
-		return std::sqrt(_x * _x + _y * _y + _z * _z + _w * _w);
+		return std::sqrt(x * x + y * y + z * z + w * w);
 	}
 
 	float Vector4::quadrance() const {
-		return _x * _x + _y * _y + _z * _z + _w * _w;
+		return x * x + y * y + z * z + w * w;
 	}
 
 	Vector4 Vector4::normalized() const {
@@ -39,11 +39,11 @@ namespace avt {
 	}
 
 	Vector4 Vector4::pow(float exp) const {
-		return Vector4(std::pow(_x, exp), std::pow(_y, exp), std::pow(_z, exp), std::pow(_w, exp));
+		return Vector4(std::pow(x, exp), std::pow(y, exp), std::pow(z, exp), std::pow(w, exp));
 	}
 
 	float Vector4::distanceTo(const Vector4& vec) const {
-		Vector4 newV(vec.x() - _x, vec.y() - _y, vec.z() - _z, vec.w() - _w);
+		Vector4 newV(vec.x - x, vec.y - y, vec.z - z, vec.w - w);
 		return newV.length();
 	}
 
@@ -52,27 +52,27 @@ namespace avt {
 	}
 
 	Vector4 Vector4::operator+() const {
-		return Vector4(_x, _y, _z, _w);
+		return Vector4(x, y, z, w);
 	}
 
 	Vector4 Vector4::operator-() const {
-		return Vector4(-_x, -_y, -_z, -_w);
+		return Vector4(-x, -y, -z, -w);
 	}
 
 	Vector4 Vector4::operator+(const Vector4& vec) const {
-		return Vector4(_x + vec.x(), _y + vec.y(), _z + vec.z(), _w + vec.w());
+		return Vector4(x + vec.x, y + vec.y, z + vec.z, w + vec.w);
 	}
 
 	Vector4 Vector4::operator+(float num) const {
-		return Vector4(_x + num, _y + num, _z + num);
+		return Vector4(x + num, y + num, z + num);
 	}
 
 	bool Vector4::operator==(const Vector4& vec) const {
-		return _x == vec.x() && _y == vec.y() && _z == vec.z() && _w == vec.w();
+		return x == vec.x && y == vec.y && z == vec.z && w == vec.w;
 	}
 
 	bool Vector4::operator!=(const Vector4& vec) const {
-		return _x != vec.x() || _y != vec.y() || _z != vec.z() || _w != vec.w();
+		return x != vec.x || y != vec.y || z != vec.z || w != vec.w;
 	}
 
 	float Vector4::operator*(const Vector4& vec) const {
@@ -80,102 +80,102 @@ namespace avt {
 	}
 
 	Vector4 Vector4::operator*(float num) const {
-		return Vector4(_x * num, _y * num, _z * num, _w * num);
+		return Vector4(x * num, y * num, z * num, w * num);
 	}
 
 
 	Vector4 Vector4::operator-(const Vector4& vec) const {
-		return Vector4(_x - vec.x(), _y - vec.y(), _z - vec.z(), _w - vec.w());
+		return Vector4(x - vec.x, y - vec.y, z - vec.z, w - vec.w);
 	}
 
 	Vector4 Vector4::operator-(float num) const {
-		return Vector4(_x - num, _y - num, _z - num, _w - num);
+		return Vector4(x - num, y - num, z - num, w - num);
 	}
 
 	Vector4& Vector4::operator+=(const Vector4& vec) {
-		_x += vec.x();
-		_y += vec.y();
-		_z += vec.z();
-		_w += vec.w();
+		x += vec.x;
+		y += vec.y;
+		z += vec.z;
+		w += vec.w;
 		return *this;
 	}
 
 	Vector4& Vector4::operator+=(float num) {
-		_x += num;
-		_y += num;
-		_z += num;
-		_w += num;
+		x += num;
+		y += num;
+		z += num;
+		w += num;
 		return *this;
 	}
 
 	Vector4& Vector4::operator-=(const Vector4& vec) {
-		_x -= vec.x();
-		_y -= vec.y();
-		_z -= vec.z();
-		_w -= vec.w();
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
+		w -= vec.w;
 		return *this;
 	}
 
 	Vector4& Vector4::operator-=(float num) {
-		_x -= num;
-		_y -= num;
-		_z -= num;
-		_w -= num;
+		x -= num;
+		y -= num;
+		z -= num;
+		w -= num;
 		return *this;
 	}
 
 	Vector4& Vector4::operator*=(const Vector4& vec) {
-		_x *= vec.x();
-		_y *= vec.y();
-		_z *= vec.z();
-		_w *= vec.w();
+		x *= vec.x;
+		y *= vec.y;
+		z *= vec.z;
+		w *= vec.w;
 		return *this;
 	}
 
 	Vector4& Vector4::operator*=(float num) {
-		_x *= num;
-		_y *= num;
-		_z *= num;
-		_w *= num;
+		x *= num;
+		y *= num;
+		z *= num;
+		w *= num;
 		return *this;
 	}
 
 	Vector4& Vector4::operator/=(float num) {
-		_x /= num;
-		_y /= num;
-		_z /= num;
-		_w /= num;
+		x /= num;
+		y /= num;
+		z /= num;
+		w /= num;
 		return *this;
 	}
 
 	Vector4 Vector4::operator/(float num) const {
-		return Vector4(_x / num, _y / num, _z / num, _w / num);
+		return Vector4(x / num, y / num, z / num, w / num);
 	}
 
 	Vector4& Vector4::operator=(const Vector4& vec) {
-		_x = vec.x();
-		_y = vec.y();
-		_z = vec.z();
-		_w = vec.w();
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+		w = vec.w;
 		return *this;
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vector4& vec) {
-		os << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ", " << vec.w() << ")";
+		os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << ")";
 		return os;
 	}
 
 	std::istream& operator>>(std::istream& is, Vector4& vec) {
-		is >> vec._x >> vec._y >> vec._z >> vec._w;
+		is >> vec.x >> vec.y >> vec.z >> vec.w;
 		return is;
 	}
 
 	Vector2 Vector4::to2D() const {
-		return Vector2(_x, _y);
+		return Vector2(x, y);
 	}
 
 	Vector3 Vector4::to3D() const {
-		return Vector3(_x, _y, _z);
+		return Vector3(x, y, z);
 	}
 
 }

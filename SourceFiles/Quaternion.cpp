@@ -10,10 +10,10 @@ namespace avt {
 		Vector3 axisn = axis.normalized();
 		Vector3 v = sin(rad / 2.0f) * axisn;
 
-		_t = cos(rad / 2.0f);
-		_x = v.x();
-		_y = v.y();
-		_z = v.z();
+		t = cos(rad / 2.0f);
+		x = v.x;
+		y = v.y;
+		z = v.z;
 
 		clean();
 		normalize();
@@ -21,28 +21,28 @@ namespace avt {
 
 	Vector3 Quaternion::getAxis() const {
 		Quaternion qn = normalized();
-		float s = sqrt(1.0f - qn.t() * qn.t());
+		float s = sqrt(1.0f - qn.t * qn.t);
 		if (s < THRESHOLD) {
 			return Vector3(1.0f, 0, 0);
 		} else {
-			return Vector3(qn.x(), qn.y(), qn.z()) / s;
+			return Vector3(qn.x, qn.y, qn.z) / s;
 		}
 	}
 
 	float Quaternion::getAngle() const {
-		return 2.0f * acos(_t);
+		return 2.0f * acos(t);
 	}
 
 
 	void Quaternion::clean() {
-		if (fabs(_t) < THRESHOLD) _t = 0.0f;
-		if (fabs(_x) < THRESHOLD) _x = 0.0f;
-		if (fabs(_y) < THRESHOLD) _y = 0.0f;
-		if (fabs(_z) < THRESHOLD) _z = 0.0f;
+		if (fabs(t) < THRESHOLD) t = 0.0f;
+		if (fabs(x) < THRESHOLD) x = 0.0f;
+		if (fabs(y) < THRESHOLD) y = 0.0f;
+		if (fabs(z) < THRESHOLD) z = 0.0f;
 	}
 
 	float Quaternion::quadrance() const	{
-		return _t * _t + _x * _x + _y * _y + _z * _z;
+		return t * t + x * x + y * y + z * z;
 	}
 
 	float Quaternion::length() const {
@@ -58,7 +58,7 @@ namespace avt {
 	}
 
 	Quaternion Quaternion::conj() const {
-		return Quaternion(_t, -_x, -_y, -_z);
+		return Quaternion(t, -x, -y, -z);
 	}
 
 	Quaternion Quaternion::inv() const {
@@ -66,77 +66,77 @@ namespace avt {
 	}
 
 	Quaternion Quaternion::operator+(const Quaternion& q) const {
-		return Quaternion(_t + q.t(), _x + q.x(), _y + q.y(), _z + q.z());
+		return Quaternion(t + q.t, x + q.x, y + q.y, z + q.z);
 	}
 
 	Quaternion& Quaternion::operator+=(const Quaternion& q) {
-		_t += q.t();
-		_x += q.x();
-		_y += q.y();
-		_z += q.z();
+		t += q.t;
+		x += q.x;
+		y += q.y;
+		z += q.z;
 
 		return *this;
 	}
 
 	Quaternion Quaternion::operator-(const Quaternion& q) const {
-		return Quaternion(_t - q.t(), _x - q.x(), _y - q.y(), _z - q.z());
+		return Quaternion(t - q.t, x - q.x, y - q.y, z - q.z);
 	}
 
 	Quaternion& Quaternion::operator-=(const Quaternion& q) {
-		_t -= q.t();
-		_x -= q.x();
-		_y -= q.y();
-		_z -= q.z();
+		t -= q.t;
+		x -= q.x;
+		y -= q.y;
+		z -= q.z;
 
 		return *this;
 	}
 
 	Quaternion Quaternion::operator*(const float s) const {
-		return Quaternion(_t * s, _x * s, _y * s, _z * s);
+		return Quaternion(t * s, x * s, y * s, z * s);
 	}
 
 	Quaternion& Quaternion::operator*=(const float s) {
-		_t *= s;
-		_x *= s;
-		_y *= s;
-		_z *= s;
+		t *= s;
+		x *= s;
+		y *= s;
+		z *= s;
 
 		return *this;
 	}
 
 	Quaternion Quaternion::operator/(const float s) const {
-		return Quaternion(_t / s, _x / s, _y / s, _z / s);
+		return Quaternion(t / s, x / s, y / s, z / s);
 	}
 
 	Quaternion& Quaternion::operator/=(const float s) {
-		_t /= s;
-		_x /= s;
-		_y /= s;
-		_z /= s;
+		t /= s;
+		x /= s;
+		y /= s;
+		z /= s;
 
 		return *this;
 	}
 
 	Quaternion Quaternion::operator*(const Quaternion& q) const {
 		Quaternion res;
-		res.t() = _t * q.t() - _x * q.x() - _y * q.y() - _z * q.z();
-		res.x() = _t * q.x() + _x * q.t() + _y * q.z() - _z * q.y();
-		res.y() = _t * q.y() + _y * q.t() + _z * q.x() - _x * q.z();
-		res.z() = _t * q.z() + _z * q.t() + _x * q.y() - _y * q.x();
+		res.t = t * q.t - x * q.x - y * q.y - z * q.z;
+		res.x = t * q.x + x * q.t + y * q.z - z * q.y;
+		res.y = t * q.y + y * q.t + z * q.x - x * q.z;
+		res.z = t * q.z + z * q.t + x * q.y - y * q.x;
 		return res;
 	}
 
 	Quaternion& Quaternion::operator*=(const Quaternion& q) {
 		Quaternion res;
-		res.t() = _t * q.t() - _x * q.x() - _y * q.y() - _z * q.z();
-		res.x() = _t * q.x() + _x * q.t() + _y * q.z() - _z * q.y();
-		res.y() = _t * q.y() + _y * q.t() + _z * q.x() - _x * q.z();
-		res.z() = _t * q.z() + _z * q.t() + _x * q.y() - _y * q.x();
+		res.t = t * q.t - x * q.x - y * q.y - z * q.z;
+		res.x = t * q.x + x * q.t + y * q.z - z * q.y;
+		res.y = t * q.y + y * q.t + z * q.x - x * q.z;
+		res.z = t * q.z + z * q.t + x * q.y - y * q.x;
 		
-		_t = res.t();
-		_x = res.x();
-		_y = res.y();
-		_z = res.z();
+		t = res.t;
+		x = res.x;
+		y = res.y;
+		z = res.z;
 
 		return *this;
 	}
@@ -145,15 +145,15 @@ namespace avt {
 		Quaternion qn = normalized();
 		Mat4 mat;
 
-		float xx = qn.x() * qn.x();
-		float xy = qn.x() * qn.y();
-		float xz = qn.x() * qn.z();
-		float xt = qn.x() * qn.t();
-		float yy = qn.y() * qn.y();
-		float yz = qn.y() * qn.z();
-		float yt = qn.y() * qn.t();
-		float zz = qn.z() * qn.z();
-		float zt = qn.z() * qn.t();
+		float xx = qn.x * qn.x;
+		float xy = qn.x * qn.y;
+		float xz = qn.x * qn.z;
+		float xt = qn.x * qn.t;
+		float yy = qn.y * qn.y;
+		float yz = qn.y * qn.z;
+		float yt = qn.y * qn.t;
+		float zz = qn.z * qn.z;
+		float zt = qn.z * qn.t;
 
 		mat[0] = 1.0f - 2.0f * (yy + zz);
 		mat[1] = 2.0f * (xy + zt);
@@ -180,15 +180,15 @@ namespace avt {
 	}
 
 	Quaternion Quaternion::lerp(const Quaternion& qEnd, float k) const {
-		float cos_angle = _x * qEnd.x() + _y * qEnd.y() + _z * qEnd.z() + _t * qEnd.t();
+		float cosangle = x * qEnd.x + y * qEnd.y + z * qEnd.z + t * qEnd.t;
 		float k0 = 1.0f - k;
-		float k1 = (cos_angle > 0) ? k : -k;
+		float k1 = (cosangle > 0) ? k : -k;
 		
 		return ((*this * k0) + (qEnd * k1)).normalized();
 	}
 
 	Quaternion Quaternion::slerp(const Quaternion& qEnd, float k) const {
-		float angle = acos(_x * qEnd.x() + _y * qEnd.y() + _z * qEnd.z() + _t * qEnd.t());
+		float angle = acos(x * qEnd.x + y * qEnd.y + z * qEnd.z + t * qEnd.t);
 		if (angle == 0) return *this;
 
 		float k0 = sin((1 - k) * angle) / sin(angle);
@@ -198,13 +198,13 @@ namespace avt {
 	}
 
 	bool Quaternion::operator==(const Quaternion& q) const {
-		return (fabs(_t - q.t()) < THRESHOLD && fabs(_x - q.x()) < THRESHOLD &&
-			fabs(_y - q.y()) < THRESHOLD && fabs(_z - q.z()) < THRESHOLD);
+		return (fabs(t - q.t) < THRESHOLD && fabs(x - q.x) < THRESHOLD &&
+			fabs(y - q.y) < THRESHOLD && fabs(z - q.z) < THRESHOLD);
 	}
 
 	bool Quaternion::operator!=(const Quaternion& q) const {
-		return (fabs(_t - q.t()) >= THRESHOLD || fabs(_x - q.x()) >= THRESHOLD ||
-			fabs(_y - q.y()) >= THRESHOLD || fabs(_z - q.z()) >= THRESHOLD);
+		return (fabs(t - q.t) >= THRESHOLD || fabs(x - q.x) >= THRESHOLD ||
+			fabs(y - q.y) >= THRESHOLD || fabs(z - q.z) >= THRESHOLD);
 	}
 
 }

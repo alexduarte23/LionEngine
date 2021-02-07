@@ -84,10 +84,10 @@ namespace avt {
 	}
 
 	Vector4 Mat4::operator*(const Vector4& vec) const {
-		float x = _cells[0] * vec.x() + _cells[4] * vec.y() + _cells[8] * vec.z() + _cells[12] * vec.w();
-		float y = _cells[1] * vec.x() + _cells[5] * vec.y() + _cells[9] * vec.z() + _cells[13] * vec.w();
-		float z = _cells[2] * vec.x() + _cells[6] * vec.y() + _cells[10] * vec.z() + _cells[14] * vec.w();
-		float w = _cells[3] * vec.x() + _cells[7] * vec.y() + _cells[11] * vec.z() + _cells[15] * vec.w();
+		float x = _cells[0] * vec.x + _cells[4] * vec.y + _cells[8] * vec.z + _cells[12] * vec.w;
+		float y = _cells[1] * vec.x + _cells[5] * vec.y + _cells[9] * vec.z + _cells[13] * vec.w;
+		float z = _cells[2] * vec.x + _cells[6] * vec.y + _cells[10] * vec.z + _cells[14] * vec.w;
+		float w = _cells[3] * vec.x + _cells[7] * vec.y + _cells[11] * vec.z + _cells[15] * vec.w;
 
 		return Vector4(x, y, z, w);
 	}
@@ -189,11 +189,11 @@ namespace avt {
 	}
 
 	Mat4 Mat4::scale(Vector3 vec) {
-		return Mat4{ vec.x(), 0, 0, 0, 0, vec.y(), 0, 0, 0, 0, vec.z(), 0, 0, 0, 0, 1 };
+		return Mat4{ vec.x, 0, 0, 0, 0, vec.y, 0, 0, 0, 0, vec.z, 0, 0, 0, 0, 1 };
 	}
 
 	Mat4 Mat4::translation(Vector3 vec) {
-		return Mat4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, vec.x(), vec.y(), vec.z(), 1 };
+		return Mat4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, vec.x, vec.y, vec.z, 1 };
 	}
 
 	Mat4 Mat4::rotationX(float angle) {

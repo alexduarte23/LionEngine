@@ -224,13 +224,13 @@ namespace avt {
 
 		try {
 			std::getline(sin, token, ',');
-			color.setX(std::stof(token));
+			color.x = std::stof(token);
 
 			std::getline(sin, token, ',');
-			color.setY(std::stof(token));
+			color.y = std::stof(token);
 
 			std::getline(sin, token, ',');
-			color.setZ(std::stof(token));
+			color.z = std::stof(token);
 
 			return color;
 		}

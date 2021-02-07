@@ -7,15 +7,15 @@
 namespace avt {
 
 	float Vector2::dot(const Vector2& vec) const {
-		return _x * vec.x() + _y * vec.y();
+		return x * vec.x + y * vec.y;
 	}
 
 	float Vector2::length() const {
-		return std::sqrt(_x * _x + _y * _y);
+		return std::sqrt(x * x + y * y);
 	}
 
 	float Vector2::quadrance() const {
-		return _x * _x + _y * _y;
+		return x * x + y * y;
 	}
 
 	Vector2 Vector2::normalized() const {
@@ -33,11 +33,11 @@ namespace avt {
 	}
 
 	Vector2 Vector2::pow(float exp) const {
-		return Vector2(std::pow(_x, exp), std::pow(_y, exp));
+		return Vector2(std::pow(x, exp), std::pow(y, exp));
 	}
 
 	float Vector2::distanceTo(const Vector2& vec) const {
-		Vector2 newV(vec.x() - _x, vec.y() - _y);
+		Vector2 newV(vec.x - x, vec.y - y);
 		return newV.length();
 	}
 
@@ -46,27 +46,27 @@ namespace avt {
 	}
 
 	Vector2 Vector2::operator+() const {
-		return Vector2(_x, _y);
+		return Vector2(x, y);
 	}
 
 	Vector2 Vector2::operator-() const {
-		return Vector2(-_x, -_y);
+		return Vector2(-x, -y);
 	}
 
 	Vector2 Vector2::operator+(const Vector2& vec) const {
-		return Vector2(_x + vec.x(), _y + vec.y());
+		return Vector2(x + vec.x, y + vec.y);
 	}
 
 	Vector2 Vector2::operator+(float num) const {
-		return Vector2(_x + num, _y + num);
+		return Vector2(x + num, y + num);
 	}
 
 	bool Vector2::operator==(const Vector2& vec) const {
-		return _x == vec.x() && _y == vec.y();
+		return x == vec.x && y == vec.y;
 	}
 
 	bool Vector2::operator!=(const Vector2& vec) const {
-		return _x != vec.x() || _y != vec.y();
+		return x != vec.x || y != vec.y;
 	}
 
 	float Vector2::operator*(const Vector2& vec) const {
@@ -74,86 +74,86 @@ namespace avt {
 	}
 
 	Vector2 Vector2::operator*(float num) const {
-		return Vector2(_x * num, _y * num);
+		return Vector2(x * num, y * num);
 	}
 
 
 	Vector2 Vector2::operator-(const Vector2& vec) const {
-		return Vector2(_x - vec.x(), _y - vec.y());
+		return Vector2(x - vec.x, y - vec.y);
 	}
 
 	Vector2 Vector2::operator-(float num) const {
-		return Vector2(_x - num, _y - num);
+		return Vector2(x - num, y - num);
 	}
 
 	Vector2& Vector2::operator+=(const Vector2& vec) {
-		_x += vec.x();
-		_y += vec.y();
+		x += vec.x;
+		y += vec.y;
 		return *this;
 	}
 
 	Vector2& Vector2::operator+=(float num) {
-		_x += num;
-		_y += num;
+		x += num;
+		y += num;
 		return *this;
 	}
 
 	Vector2& Vector2::operator-=(const Vector2& vec) {
-		_x -= vec.x();
-		_y -= vec.y();
+		x -= vec.x;
+		y -= vec.y;
 		return *this;
 	}
 
 	Vector2& Vector2::operator-=(float num) {
-		_x -= num;
-		_y -= num;
+		x -= num;
+		y -= num;
 		return *this;
 	}
 
 	Vector2& Vector2::operator*=(const Vector2& vec) {
-		_x *= vec.x();
-		_y *= vec.y();
+		x *= vec.x;
+		y *= vec.y;
 		return *this;
 	}
 
 	Vector2& Vector2::operator*=(float num) {
-		_x *= num;
-		_y *= num;
+		x *= num;
+		y *= num;
 		return *this;
 	}
 
 	Vector2& Vector2::operator/=(float num) {
-		_x /= num;
-		_y /= num;
+		x /= num;
+		y /= num;
 		return *this;
 	}
 
 	Vector2 Vector2::operator/(float num) const {
-		return Vector2(_x / num, _y / num);
+		return Vector2(x / num, y / num);
 	}
 
 	Vector2& Vector2::operator=(const Vector2& vec) {
-		_x = vec.x();
-		_y = vec.y();
+		x = vec.x;
+		y = vec.y;
 		return *this;
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vector2& vec) {
-		os << "(" << vec.x() << ", " << vec.y() << ")";
+		os << "(" << vec.x << ", " << vec.y << ")";
 		return os;
 	}
 
 	std::istream& operator>>(std::istream& is, Vector2& vec) {
-		is >> vec._x >> vec._y;
+		is >> vec.x >> vec.y;
 		return is;
 	}
 
 	Vector3 Vector2::to3D(float z) const {
-		return Vector3(_x, _y, z);
+		return Vector3(x, y, z);
 	}
 
 	Vector4 Vector2::to4D(float z, float w) const {
-		return Vector4(_x, _y, z, w);
+		return Vector4(x, y, z, w);
 	}
 
 }

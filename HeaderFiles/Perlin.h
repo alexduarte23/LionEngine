@@ -29,7 +29,7 @@ namespace avt {
 			float dy = y - (float)iy;
 
 			// Compute the dot-product
-			return (dx * gradient.x() + dy * gradient.y());
+			return (dx * gradient.x + dy * gradient.y);
 		}
 
 		static float fade(float a) {
