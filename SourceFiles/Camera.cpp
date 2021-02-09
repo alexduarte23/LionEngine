@@ -23,20 +23,27 @@ namespace avt {
 		return _projM;
 	}
 
-	void Camera::processMove(const Vector3& movement, double deltaTime) {
-		auto offsets = movement.normalized() * _moveSpeed * (float)deltaTime;
+	void Camera::processMove(const Vector3& movement, float dt) {
+		auto offsets = movement.normalized() * _moveSpeed * dt;
 
 		_pos += _right * offsets.x + _up * offsets.y + _front * offsets.z;
+
 		updateView();
 	}
 
-	void Camera::processMouse(const Vector2& offset , double deltaTime, bool invert) {
-		float yaw = (float)offset.x * _mouseSens * (float)deltaTime;
-		float pitch = (float)offset.y * _mouseSens * (float)deltaTime;
+	void Camera::processOrbit(const Vector2& offset , float dt, bool invert) {
 		int direction = invert ? -1 : 1;
+		float yaw = direction * offset.x * _orbitSpeed * dt;
+		float pitch = direction * offset.y * _orbitSpeed * dt;
 
-		_front = _front.rotateOnAxis(_up, direction * toRad(yaw));
-		_front = _front.rotateOnAxis(_right, direction * toRad(pitch));
+		float diff = _front.angleTo(_worldUp);
+		if (diff - pitch < _margin)
+			pitch = diff - _margin;
+		else if (PI - diff + pitch < _margin)
+			pitch = - (PI - diff - _margin);
+
+		auto q = Quaternion(_right, pitch) * Quaternion(_up, yaw);
+		_front = _front.rotateOnQuat(q);
 
 		updateView();
 	}

@@ -9,8 +9,9 @@ namespace avt{
 	class UniformBuffer {
 	private:
 		GLuint _uboID;
+		GLsizei _size;
 	public:
-		UniformBuffer() : _uboID(0) {}
+		UniformBuffer() : _uboID(0), _size(0) {}
 		~UniformBuffer();
 
 		void create(GLsizeiptr size, GLuint ubBinding);

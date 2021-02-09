@@ -8,6 +8,7 @@ namespace avt {
 
 	struct Vector2;
 	struct Vector4;
+	struct Quaternion;
 
 	struct Vector3 {
 		float x, y, z;
@@ -48,6 +49,8 @@ namespace avt {
 		float angleTo(const Vector3& vec) const;
 
 		Vector3 rotateOnAxis(const Vector3& axis, float rad) const;
+		
+		Vector3 rotateOnQuat(const Quaternion& q) const;
 
 		friend std::ostream& operator<<(std::ostream& os, const Vector3& vec);
 

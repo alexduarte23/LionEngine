@@ -12,9 +12,6 @@ namespace avt {
 	};
 
 	void ParticleEmitter::create(const std::string& texture_filename) {
-		_texture.setWrap(GL_REPEAT, GL_REPEAT);
-		_texture.setFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-		_texture.useMipmap();
 		_texture.create(texture_filename);
 
 		_va.create();

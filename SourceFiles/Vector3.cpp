@@ -3,6 +3,8 @@
 #include "../HeaderFiles/Vector2.h"
 #include "../HeaderFiles/Vector4.h"
 #include "../HeaderFiles/Mat3.h"
+#include "../HeaderFiles/Mat4.h"
+#include "../HeaderFiles/Quaternion.h"
 
 
 namespace avt {
@@ -61,6 +63,10 @@ namespace avt {
 		Mat3 K = Mat3::dual(axis);
 		Mat3 R = Mat3::identity() + sin(rad) * K + (1 - cos(rad)) * (K * K);
 		return R * *this;
+	}
+
+	Vector3 Vector3::rotateOnQuat(const Quaternion& q) const {
+		return (q.toMat() * (*this).to4D()).to3D();
 	}
 
 	Vector3 Vector3::operator+() const {

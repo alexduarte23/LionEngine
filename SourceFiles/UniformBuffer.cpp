@@ -10,11 +10,15 @@ namespace avt {
 		glBindBuffer(GL_UNIFORM_BUFFER, _uboID);
 		glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STREAM_DRAW);
 		glBindBufferBase(GL_UNIFORM_BUFFER, ubBinding, _uboID);
+
+		_size = (GLsizei)size;
 	}
 
 	UniformBuffer::~UniformBuffer() {
-		glDeleteBuffers(1, &_uboID);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		if (_uboID) {
+			glDeleteBuffers(1, &_uboID);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		}
 
 #ifndef ERROR_CALLBACK
 		ErrorManager::checkOpenGLError("ERROR: Could not destroy Uniform Buffer.");
@@ -22,7 +26,9 @@ namespace avt {
 	}
 
 	void UniformBuffer::fill(std::initializer_list<Mat4> mList) {
-		bind();
+		if (!_uboID || mList.size() * 16 * sizeof(GLfloat) > _size) return;
+
+		glBindBuffer(GL_UNIFORM_BUFFER, _uboID);
 		GLintptr pos = 0;
 		for (auto& m : mList) {
 			glBufferSubData(GL_UNIFORM_BUFFER, pos, 16*sizeof(GLfloat), m.data());

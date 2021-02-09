@@ -14,8 +14,10 @@ namespace avt {
 	}
 
 	VertexBuffer::~VertexBuffer() {
-		glDeleteBuffers(1, &_vboID);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		if (_vboID) {
+			glDeleteBuffers(1, &_vboID);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		}
 
 #ifndef ERROR_CALLBACK
 		avt::ErrorManager::checkOpenGLError("ERROR: Could not destroy Vertex Buffer.");
@@ -32,6 +34,8 @@ namespace avt {
 	}
 
 	void VertexBuffer::fill(const void* data, GLsizeiptr size) {
+		if (!_vboID || size > _size) return;
+
 		glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}

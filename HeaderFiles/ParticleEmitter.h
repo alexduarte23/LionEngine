@@ -215,9 +215,6 @@ namespace avt {
 			: ParticleEmitter("Resources/textures/particleSmoke7.png", 50) {
 			_spawnPeriod = .02f;
 		
-			_dissolveMap.setWrap(GL_REPEAT, GL_REPEAT);
-			_dissolveMap.setFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-			_dissolveMap.useMipmap();
 			_dissolveMap.create("Resources/textures/dissolve01.png");
 
 			spawn(0);

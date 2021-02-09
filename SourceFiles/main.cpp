@@ -252,38 +252,26 @@ private:
 
 	void processKeyInput(GLFWwindow* win, double dt) {
 		avt::Vector3 move;
-		if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) {
-			move.z += 1;
-		}
-		if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS) {
-			move.z -= 1;
-		}
-		if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS) {
-			move.x -= 1;
-		}
-		if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS) {
-			move.x += 1;
-		}
-		if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			move.y += 1;
-		}
-		if (glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-			move.y -= 1;
-		}
+		if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) move.z += 1;
+		if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS) move.z -= 1;
+		if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS) move.x -= 1;
+		if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS) move.x += 1;
+		if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS) move.y += 1;
+		if (glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) move.y -= 1;
 
-		_cams.get("ort")->processMove(move, dt);
-		_cams.get("per")->processMove(move, dt);
+		_cams.get("ort")->processMove(move, (float)dt);
+		_cams.get("per")->processMove(move, (float)dt);
 	}
 
 	void processMouseMovement(GLFWwindow* win, const avt::Vector2& lastCursor, const avt::Vector2& newCursor, double  dt) {
 		auto offset = newCursor - lastCursor;
 		if (!_cursorVisible) { // free move
-			_cams.get("ort")->processMouse(offset, dt, true);
-			_cams.get("per")->processMouse(offset, dt, true);
+			_cams.get("ort")->processOrbit(offset, (float)dt, true);
+			_cams.get("per")->processOrbit(offset, (float)dt, true);
 
 		} else if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) { // drag move
-			_cams.get("ort")->processMouse(offset, dt);
-			_cams.get("per")->processMouse(offset, dt);
+			_cams.get("ort")->processOrbit(offset, (float)dt);
+			_cams.get("per")->processOrbit(offset, (float)dt);
 
 		}
 
@@ -436,8 +424,8 @@ private:
 		auto camHUD = new avt::OrthographicCamera(-10.0f, 10.0f, -10.0f / aspect, 10.0f / aspect, 0.1f, 100.0f, avt::Vector3(0, 0, 10.f));
 		camP->lookAt(campfire.getPosition());
 		camO->lookAt(campfire.getPosition());
-		camP->setSpeed(8.f);
-		camO->setSpeed(8.f);
+		camP->setMoveSpeed(8.f);
+		camO->setMoveSpeed(8.f);
 
 		_cams.add("per", camP);
 		_cams.add("ort", camO);

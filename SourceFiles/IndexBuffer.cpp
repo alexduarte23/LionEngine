@@ -12,8 +12,10 @@ namespace avt {
 	}
 
 	IndexBuffer::~IndexBuffer() {
-		glDeleteBuffers(1, &_iboID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		if (_iboID) {
+			glDeleteBuffers(1, &_iboID);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
 
 #ifndef ERROR_CALLBACK
 		ErrorManager::checkOpenGLError("ERROR: Could not destroy Index Buffer.");

@@ -6,6 +6,10 @@
 
 namespace avt {
 
+	struct Vector2;
+	struct Vector3;
+	struct Vector4;
+
 	struct LayoutEl {
 		GLint count;
 		GLenum type;
@@ -23,7 +27,7 @@ namespace avt {
 		~VertexBufferLayout() {}
 
 		template<typename T>
-		void add(GLint count, GLboolean norm = GL_FALSE) {
+		void add(GLint count = 1, GLboolean norm = GL_FALSE) {
 			std::cerr << "layout type not supported" << std::endl;
 		}
 
@@ -31,6 +35,21 @@ namespace avt {
 		void add<GLfloat>(GLint count, GLboolean norm) {
 			_elements.push_back({ count, GL_FLOAT, sizeof(GLfloat), norm });
 			_stride += count * sizeof(GLfloat);
+		}
+
+		template<>
+		void add<Vector2>(GLint count, GLboolean norm) {
+			add<GLfloat>(2 * count, norm);
+		}
+
+		template<>
+		void add<Vector3>(GLint count, GLboolean norm) {
+			add<GLfloat>(3 * count, norm);
+		}
+
+		template<>
+		void add<Vector4>(GLint count, GLboolean norm) {
+			add<GLfloat>(4 * count, norm);
 		}
 
 		void setDivisor(GLuint d) {

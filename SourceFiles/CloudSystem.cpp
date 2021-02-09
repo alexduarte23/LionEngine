@@ -56,10 +56,10 @@ namespace avt {
 		_va.create();
 
 		VertexBufferLayout cube_layout;
-		cube_layout.add<GLfloat>(3); // POSITION
-		cube_layout.add<GLfloat>(2); // TEXTURE COORD
-		cube_layout.add<GLfloat>(3); // NORMAL
-		cube_layout.add<GLfloat>(3); // COLOR
+		cube_layout.add<Vector3>(); // POSITION
+		cube_layout.add<Vector2>(); // TEXTURE COORD
+		cube_layout.add<Vector3>(); // NORMAL
+		cube_layout.add<Vector3>(); // COLOR
 
 		_cube_vb.create(_cubeData.data(), _cubeData.size() * sizeof(Vertex));
 		_va.addBuffer(_cube_vb, cube_layout);
@@ -67,8 +67,8 @@ namespace avt {
 
 		VertexBufferLayout instance_layout;
 		instance_layout.setDivisor(1);
-		instance_layout.add<GLfloat>(3); // POSITIONS
-		instance_layout.add<GLfloat>(1); // SIZE
+		instance_layout.add<Vector3>(); // POSITIONS
+		instance_layout.add<GLfloat>(); // SIZE
 
 		_instance_vb.create(nullptr, (long long int)_maxCubes * sizeof(CloudInfo));
 		_va.addBuffer(_instance_vb, instance_layout);
