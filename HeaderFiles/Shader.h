@@ -148,7 +148,12 @@ namespace avt {
 
 	public:
 		Shader() : _program(0) {}
-		~Shader() {}
+		~Shader() {
+			if (_program) {
+				glDeleteProgram(_program);
+				glUseProgram(0);
+			}
+		}
 
 		void create(const ShaderParams& params);
 
