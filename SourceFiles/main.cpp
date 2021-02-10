@@ -280,136 +280,54 @@ private:
 	void createShaders() {
 
 		// create regular mesh shader
-		_shader.addShader(GL_VERTEX_SHADER, "./Resources/shadowShaders/vertexShadowShader.glsl");
-		_shader.addShader(GL_FRAGMENT_SHADER, "./Resources/shadowShaders/fragmentShadowShader.glsl");
-		_shader.addAttribute("inPosition", VERTICES);
-		_shader.addAttribute("inTexcoord", TEXTURES);
-		_shader.addAttribute("inNormal", NORMALS);
-		_shader.addAttribute("inColor", COLORS);
-		_shader.addUniform("ModelMatrix");
-
-		_shader.addUniform("campfireLSM1");
-		_shader.addUniform("campfireLSM2");
-		_shader.addUniform("campfireLSM3");
-		_shader.addUniform("campfireLSM4");
-		_shader.addUniform("campfireLSM5");
-
-		_shader.addUniform("campfireSM1");
-		_shader.addUniform("campfireSM2");
-		_shader.addUniform("campfireSM3");
-		_shader.addUniform("campfireSM4");
-		_shader.addUniform("campfireSM5");
-
-		_shader.addUniform("envLSM");
-		_shader.addUniform("envSM");
-
-		_shader.addUniform("campfirePos");
-		_shader.addUniform("campfireColor");
-
-		_shader.addUniform("envPos");
-		_shader.addUniform("envColor");
-
-		_shader.addUniform("AmbientColor");
-		_shader.addUniform("EyePosition");
-		_shader.addUbo("CameraMatrices", UBO_BP);
-		_shader.create();
-
+		avt::ShaderParams params;
+		params.setVertexShader("./Resources/shadowShaders/vertexShadowShader.glsl")
+			.setFragmentShader("./Resources/shadowShaders/fragmentShadowShader.glsl")
+			.addInputs({ "inPosition", "inTexcoord", "inNormal", "inColor" })
+			.addUniforms({ "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5" })
+			.addUniforms({ "campfireSM1", "campfireSM2", "campfireSM3", "campfireSM4", "campfireSM5" })
+			.addUniforms({ "envLSM", "envSM", "campfirePos", "campfireColor", "envPos", "envColor", "AmbientColor" })
+			.addUniforms({ "EyePosition", "ModelMatrix" })
+			.addUniformBlock("CameraMatrices", 0);
+		_shader.create(params);
 
 		// create clouds shader, simular to mesh shader but with instancing
-		_shaderClouds.addShader(GL_VERTEX_SHADER, "./Resources/shadowShaders/vertexShadowCloudsShader.glsl");
-		_shaderClouds.addShader(GL_FRAGMENT_SHADER, "./Resources/shadowShaders/fragmentShadowShader.glsl");
-		_shaderClouds.addAttribute("inPosition", VERTICES);
-		_shaderClouds.addAttribute("inTexcoord", TEXTURES);
-		_shaderClouds.addAttribute("inNormal", NORMALS);
-		_shaderClouds.addAttribute("inColor", COLORS);
-		_shaderClouds.addAttribute("inOffset", 4);
-		_shaderClouds.addAttribute("inSize", 5);
-		_shaderClouds.addUniform("ModelMatrix");
-
-		_shaderClouds.addUniform("campfireLSM1");
-		_shaderClouds.addUniform("campfireLSM2");
-		_shaderClouds.addUniform("campfireLSM3");
-		_shaderClouds.addUniform("campfireLSM4");
-		_shaderClouds.addUniform("campfireLSM5");
-
-		_shaderClouds.addUniform("campfireSM1");
-		_shaderClouds.addUniform("campfireSM2");
-		_shaderClouds.addUniform("campfireSM3");
-		_shaderClouds.addUniform("campfireSM4");
-		_shaderClouds.addUniform("campfireSM5");
-
-		_shaderClouds.addUniform("envLSM");
-		_shaderClouds.addUniform("envSM");
-
-		_shaderClouds.addUniform("campfirePos");
-		_shaderClouds.addUniform("campfireColor");
-
-		_shaderClouds.addUniform("envPos");
-		_shaderClouds.addUniform("envColor");
-
-		_shaderClouds.addUniform("AmbientColor");
-		_shaderClouds.addUniform("EyePosition");
-		_shaderClouds.addUbo("CameraMatrices", UBO_BP);
-		_shaderClouds.create();
+		params.setVertexShader("./Resources/shadowShaders/vertexShadowCloudsShader.glsl")
+			.addInputs({ "inOffset", "inSize" }, 4);
+		_shaderClouds.create(params);
 
 
 		// create fire shader
-		_shaderParticles.addShader(GL_VERTEX_SHADER, "./Resources/particleShaders/particles-vs.glsl");
-		_shaderParticles.addShader(GL_FRAGMENT_SHADER, "./Resources/particleShaders/particles-fs.glsl");
-		_shaderParticles.addAttribute("in_vertex", 0);
-		_shaderParticles.addAttribute("in_texCoord", 1);
-		_shaderParticles.addAttribute("in_pos", 2);
-		_shaderParticles.addAttribute("in_color", 3);
-		_shaderParticles.addAttribute("in_size", 4);
-		_shaderParticles.addAttribute("in_rot", 5);
-		_shaderParticles.addUniform("ModelMatrix");
-		_shaderParticles.addUniform("in_texture");
-		_shaderParticles.addUbo("SharedMatrices", UBO_BP);
-		_shaderParticles.create();
-		_shaderParticles.bind();
-		glUniform1i(_shaderParticles.getUniform("in_texture"), 0);
-		_shaderParticles.unbind();
+		params.clear()
+			.setVertexShader("./Resources/particleShaders/particles-vs.glsl")
+			.setFragmentShader("./Resources/particleShaders/particles-fs.glsl")
+			.addInputs({ "in_vertex", "in_texCoord", "in_pos", "in_color", "in_size", "in_rot" })
+			.addUniform("ModelMatrix")
+			.addTexture("in_texture", 0)
+			.addUniformBlock("SharedMatrices", 0);
+		_shaderParticles.create(params);
 
 		// create fire shader
-		_shaderFire.addShader(GL_VERTEX_SHADER, "./Resources/particleShaders/particles-vs.glsl");
-		_shaderFire.addShader(GL_FRAGMENT_SHADER, "./Resources/particleShaders/fire-fs.glsl");
-		_shaderFire.addAttribute("in_vertex", 0);
-		_shaderFire.addAttribute("in_texCoord", 1);
-		_shaderFire.addAttribute("in_pos", 2);
-		_shaderFire.addAttribute("in_color", 3);
-		_shaderFire.addAttribute("in_size", 4);
-		_shaderFire.addAttribute("in_rot", 5);
-		_shaderFire.addUniform("ModelMatrix");
-		_shaderFire.addUniform("in_texture");
-		_shaderFire.addUniform("in_dissolveMap");
-		_shaderFire.addUbo("SharedMatrices", UBO_BP);
-		_shaderFire.create();
-		_shaderFire.bind();
-		glUniform1i(_shaderFire.getUniform("in_texture"), 0);
-		glUniform1i(_shaderFire.getUniform("in_dissolveMap"), 1);
-		_shaderFire.unbind();
-
+		params.setFragmentShader("./Resources/particleShaders/fire-fs.glsl")
+			.addTexture("in_dissolveMap", 1);
+		_shaderFire.create(params);
 
 		// create hud shader
-		_shaderHUD.addShader(GL_VERTEX_SHADER, "./Resources/HUDshaders/hud-vs.glsl");
-		_shaderHUD.addShader(GL_FRAGMENT_SHADER, "./Resources/HUDshaders/hud-fs.glsl");
-		_shaderHUD.addAttribute("inPosition", 0);
-		_shaderHUD.addAttribute("inTexcoord", 1);
-		_shaderHUD.addAttribute("inColor", 2);
-		_shaderHUD.addUniform("ModelMatrix");
-		_shaderHUD.addUniform("inTexture");
-		_shaderHUD.addUbo("CameraMatrices", UBO_BP);
-		_shaderHUD.create();
-		_shaderHUD.bind();
-		glUniform1i(_shaderHUD.getUniform("inTexture"), 0);
-		_shaderHUD.unbind();
+		params.clear()
+			.setVertexShader("./Resources/HUDshaders/hud-vs.glsl")
+			.setFragmentShader("./Resources/HUDshaders/hud-fs.glsl")
+			.addInputs({ "inPosition", "inTexcoord", "inColor" })
+			.addUniform("ModelMatrix")
+			.addTexture("inTexture", 0)
+			.addUniformBlock("CameraMatrices", 0);
+		_shaderHUD.create(params);
 
 		// create background shader
-		_shaderBG.addShader(GL_VERTEX_SHADER, "./Resources/bgShaders/bg-vs.glsl");
-		_shaderBG.addShader(GL_FRAGMENT_SHADER, "./Resources/bgShaders/bg-fs.glsl");
-		_shaderBG.addAttribute("inPosition", 0);
-		_shaderBG.addAttribute("inColor", 1);
-		_shaderBG.create();
+		params.clear()
+			.setVertexShader("./Resources/bgShaders/bg-vs.glsl")
+			.setFragmentShader("./Resources/bgShaders/bg-fs.glsl")
+			.addInputs({ "inPosition", "inColor" });
+		_shaderBG.create(params);
 	}
 
 

@@ -20,7 +20,7 @@ namespace avt {
 
 	}
 
-	void Shader::addShader(GLenum shader_type, const std::string& filename) {
+	unsigned int Shader::compileShader(GLenum shader_type, const std::string& filename) {
 		GLchar* shaderChar;
 		parseShader(filename, &shaderChar);
 
@@ -28,36 +28,49 @@ namespace avt {
 		glShaderSource(shaderId, 1, &shaderChar, 0);
 		glCompileShader(shaderId);
 
-		_shaders.insert({ shader_type, {shaderId} });
 		delete[] shaderChar;
+		return shaderId;
 	}
 
-	void Shader::create() {
+
+	void Shader::create(const ShaderParams& params) {
+		std::vector<GLuint> shaderIDs;
+		shaderIDs.push_back(compileShader(GL_VERTEX_SHADER, params._vertexShader));
+		shaderIDs.push_back(compileShader(GL_FRAGMENT_SHADER, params._fragmentShader));
+
 		_program = glCreateProgram();
 
-		for (auto& el : _shaders) { // Shader Attach
-			glAttachShader(_program, el.second.i);
+		for (auto& el : shaderIDs) { // Shader Attach
+			glAttachShader(_program, el);
 		}
 
-		for (auto& el : _attributes) { // Attribute Bind
-			glBindAttribLocation(_program, el.second.i, el.first.c_str());
+		for (auto& el : params._inputs) { // Attribute Bind
+			glBindAttribLocation(_program, el.second, el.first.c_str());
 		}
 
 		glLinkProgram(_program);
 
-		for (auto& el : _uniforms) { // Uniforms
-			el.second.i = glGetUniformLocation(_program, el.first.c_str());
+		for (auto& el : params._uniforms) { // Uniforms
+			auto index = glGetUniformLocation(_program, el.c_str());
+			_uniforms.insert({ el, index });
 		}
 
-		for (auto& el : _ubos) { // UBOS
-			el.second.block_index = glGetUniformBlockIndex(_program, el.first.c_str());
-			glUniformBlockBinding(_program, el.second.block_index, el.second.binding_point);
+		for (auto& el : params._uniformBlocks) { // UBOS
+			auto block_index = glGetUniformBlockIndex(_program, el.first.c_str());
+			glUniformBlockBinding(_program, block_index, el.second);
 		}
 
-		for (auto& el : _shaders) { // Shader Delete
-			glDetachShader(_program, el.second.i);
-			glDeleteShader(el.second.i);
+		for (auto& el : shaderIDs) { // Shader Delete
+			glDetachShader(_program, el);
+			glDeleteShader(el);
 		}
+
+		glUseProgram(_program);
+		for (auto& tex : params._textures) { // set textures
+			auto location = glGetUniformLocation(_program, tex.first.c_str());
+			glUniform1i(location, tex.second);
+		}
+		glUseProgram(0);
 	}
 
 }

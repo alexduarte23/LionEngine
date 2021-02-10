@@ -28,35 +28,30 @@ namespace avt {
 		}
 
 		void createShaderBrightValues() {
-			_ShaderBrightValues.addShader(GL_VERTEX_SHADER, "./Resources/bloomShaders/brightVertexshader.shader");
-			_ShaderBrightValues.addShader(GL_FRAGMENT_SHADER, "./Resources/bloomShaders/brightFragmentshader.shader");
-			_ShaderBrightValues.addAttribute("inVertex", VERTICES); 
-			_ShaderBrightValues.addAttribute("inTexcoord", TEXTURES); 
-			_ShaderBrightValues.addUniform("TexFramebuffer"); 
-			_ShaderBrightValues.create();
+			ShaderParams params;
+			params.setVertexShader("./Resources/bloomShaders/brightVertexshader.shader")
+				.setFragmentShader("./Resources/bloomShaders/brightFragmentshader.shader")
+				.addInputs({ "inVertex", "inTexcoord" })
+				.addUniform("TexFramebuffer");
+			_ShaderBrightValues.create(params);
 		}
 
 		void createShaderGaussianBlur() {
-			_ShaderGaussianBlur.addShader(GL_VERTEX_SHADER, "./Resources/bloomShaders/gaussianblurVertexshader.shader");
-			_ShaderGaussianBlur.addShader(GL_FRAGMENT_SHADER, "./Resources/bloomShaders/gaussianblurFragmentshader.shader");
-			_ShaderGaussianBlur.addAttribute("inVertex", VERTICES); 
-			_ShaderGaussianBlur.addAttribute("inTexcoord", TEXTURES);
-			_ShaderGaussianBlur.addUniform("TexFramebuffer");
-			_ShaderGaussianBlur.addUniform("horizontal");
-			_ShaderGaussianBlur.addUniform("tex");
-			_ShaderGaussianBlur.create();
+			ShaderParams params;
+			params.setVertexShader("./Resources/bloomShaders/gaussianblurVertexshader.shader")
+				.setFragmentShader("./Resources/bloomShaders/gaussianblurFragmentshader.shader")
+				.addInputs({ "inVertex", "inTexcoord" })
+				.addUniforms({ "TexFramebuffer", "horizontal", "tex" });
+			_ShaderGaussianBlur.create(params);
 		}
 
 		void createShaderBloomFinal() {
-			_ShaderBloomFinal.addShader(GL_VERTEX_SHADER, "./Resources/bloomShaders/bloomFinalVertexshader.shader");
-			_ShaderBloomFinal.addShader(GL_FRAGMENT_SHADER, "./Resources/bloomShaders/bloomFinalFragmentshader.shader");
-			_ShaderBloomFinal.addAttribute("inVertex", VERTICES);
-			_ShaderBloomFinal.addAttribute("inTexcoord", TEXTURES);
-			_ShaderBloomFinal.addUniform("scene");
-			_ShaderBloomFinal.addUniform("bloomBlur");
-			_ShaderBloomFinal.addUniform("bloom");
-			_ShaderBloomFinal.addUniform("exposure");
-			_ShaderBloomFinal.create();
+			ShaderParams params;
+			params.setVertexShader("./Resources/bloomShaders/bloomFinalVertexshader.shader")
+				.setFragmentShader("./Resources/bloomShaders/bloomFinalFragmentshader.shader")
+				.addInputs({ "inVertex", "inTexcoord" })
+				.addUniforms({ "scene", "bloomBlur", "bloom", "exposure" });
+			_ShaderBloomFinal.create(params);
 		}
 
 		void setDirectionBlur(bool horizontal) {

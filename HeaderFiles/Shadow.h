@@ -46,16 +46,13 @@ namespace avt {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void createDepthShader() {
-			_depthShader.addShader(GL_VERTEX_SHADER, "./Resources/shadowShaders/vertexDepthShader.glsl");
-			_depthShader.addShader(GL_FRAGMENT_SHADER, "./Resources/shadowShaders/fragmentDepthShader.glsl");
-			_depthShader.addAttribute("inPosition", VERTICES);
-			_depthShader.addAttribute("inTexcoord", TEXTURES);
-			_depthShader.addAttribute("inNormal", NORMALS);
-			_depthShader.addAttribute("inColor", COLORS);
-			_depthShader.addUniform("ModelMatrix");
-			_depthShader.addUniform("lightSpaceMatrix");
-			_depthShader.create();
+		void createDepthShader() { 
+			ShaderParams params;
+			params.setVertexShader("./Resources/shadowShaders/vertexDepthShader.glsl")
+				.setFragmentShader("./Resources/shadowShaders/fragmentDepthShader.glsl")
+				.addInputs({ "inPosition", "inTexcoord", "inNormal", "inColor" })
+				.addUniforms({ "ModelMatrix", "lightSpaceMatrix" });
+			_depthShader.create(params);
 		}
 
 	public:
