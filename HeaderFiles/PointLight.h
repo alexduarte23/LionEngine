@@ -51,13 +51,13 @@ namespace avt {
 			shadowDown.setPosition(pos);
 		}
 
-		void updateLightSpaceMatrices(Shader& shader, GLuint xplus, GLuint xminus, GLuint zplus, GLuint zminus, GLuint down) {
+		void updateLightSpaceMatrices(Shader& shader, const std::string& xplus, const std::string& xminus, const std::string& zplus, const std::string& zminus, const std::string& down) {
 			shader.bind();
-			glUniformMatrix4fv(xplus, 1, GL_FALSE, (shadowXplus._lightView.projMatrix() * shadowXplus._lightView.viewMatrix()).data());
-			glUniformMatrix4fv(xminus, 1, GL_FALSE, (shadowXminus._lightView.projMatrix() * shadowXminus._lightView.viewMatrix()).data());
-			glUniformMatrix4fv(zplus, 1, GL_FALSE, (shadowZplus._lightView.projMatrix() * shadowZplus._lightView.viewMatrix()).data());
-			glUniformMatrix4fv(zminus, 1, GL_FALSE, (shadowZminus._lightView.projMatrix() * shadowZminus._lightView.viewMatrix()).data());
-			glUniformMatrix4fv(down, 1, GL_FALSE, (shadowDown._lightView.projMatrix() * shadowDown._lightView.viewMatrix()).data());
+			shader.uploadUniformMat4(xplus, shadowXplus._lightView.projMatrix() * shadowXplus._lightView.viewMatrix());
+			shader.uploadUniformMat4(xminus, shadowXminus._lightView.projMatrix() * shadowXminus._lightView.viewMatrix());
+			shader.uploadUniformMat4(zplus, shadowZplus._lightView.projMatrix() * shadowZplus._lightView.viewMatrix());
+			shader.uploadUniformMat4(zminus, shadowZminus._lightView.projMatrix() * shadowZminus._lightView.viewMatrix());
+			shader.uploadUniformMat4(down, shadowDown._lightView.projMatrix() * shadowDown._lightView.viewMatrix());
 			shader.unbind();
 		}
 
@@ -69,27 +69,22 @@ namespace avt {
 			shadowDown.renderToDepthMap(renderer, scene, screenWidth, screenHeight);
 		}
 
-		void shadowMapTextureLoad(Shader& shader, int firstTexture, GLuint xplus, GLuint xminus, GLuint zplus, GLuint zminus, GLuint down) {
+		void shadowMapTextureLoad(Shader& shader, int firstTexture) {
 			shader.bind();
 			glActiveTexture(GL_TEXTURE0 + firstTexture);
 			glBindTexture(GL_TEXTURE_2D, shadowXplus.depthMap());
-			glUniform1i(xplus, firstTexture);
 
 			glActiveTexture(GL_TEXTURE1 + firstTexture);
 			glBindTexture(GL_TEXTURE_2D, shadowXminus.depthMap());
-			glUniform1i(xminus, firstTexture + 1);
 
 			glActiveTexture(GL_TEXTURE2 + firstTexture);
 			glBindTexture(GL_TEXTURE_2D, shadowZplus.depthMap());
-			glUniform1i(zplus, firstTexture + 2);
 
 			glActiveTexture(GL_TEXTURE3 + firstTexture);
 			glBindTexture(GL_TEXTURE_2D, shadowZminus.depthMap());
-			glUniform1i(zminus, firstTexture + 3);
 
 			glActiveTexture(GL_TEXTURE4 + firstTexture);
 			glBindTexture(GL_TEXTURE_2D, shadowDown.depthMap());
-			glUniform1i(down, firstTexture + 4);
 
 			glActiveTexture(GL_TEXTURE0);
 			shader.unbind();

@@ -31,7 +31,7 @@ namespace avt {
 			//glUniform3f(curr_shader->getUniform("LightColor"), light->getColor().x(), light->getColor().y(), light->getColor().z());
 
 			beforeDraw();
-			glUniformMatrix4fv(curr_shader->getUniform(MODEL_MATRIX), 1, GL_FALSE, newWorldMat.data());
+			curr_shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 			glDrawArrays(GL_TRIANGLES, 0, _mesh->vb().size());
 			afterDraw();
 

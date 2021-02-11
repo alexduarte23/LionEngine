@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include <map>
 #include <string>
@@ -9,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <initializer_list>
+#include "avt_math.h"
 
 
 namespace avt {
@@ -77,7 +77,7 @@ namespace avt {
 			return *this;
 		}
 
-		ShaderParams& addTexture(std::initializer_list<std::string> texs, GLuint startBP = 0) {
+		ShaderParams& addTextures(std::initializer_list<std::string> texs, GLuint startBP = 0) {
 			auto bp = startBP;
 			for (auto& tex : texs)
 				_textures.insert({ tex, bp++ });
@@ -157,16 +157,64 @@ namespace avt {
 
 		void create(const ShaderParams& params);
 
-		GLuint getUniform(const std::string& name) {
-			return _uniforms.find(name)->second;
-		}
-
 		void bind() {
 			glUseProgram(_program);
 		}
 
 		void unbind() {
 			glUseProgram(0);
+		}
+
+		void uploadUniformFloat(const std::string& uniform, float value, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniform1f(location, value);
+		}
+
+		void uploadUniformInt(const std::string& uniform, int value, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniform1i(location, value);
+		}
+
+		void uploadUniformBool(const std::string& uniform, bool value, bool bind = false) {
+			uploadUniformInt(uniform, value, bind);
+		}
+
+		void uploadUniformVec2(const std::string& uniform, const Vector2& vec, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniform2f(location, vec.x, vec.y);
+		}
+
+		void uploadUniformVec3(const std::string& uniform, const Vector3& vec, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniform3f(location, vec.x, vec.y, vec.z);
+		}
+
+		void uploadUniformVec4(const std::string& uniform, const Vector4& vec, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+		}
+
+		void uploadUniformMat2(const std::string& uniform, const Mat2& mat, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniformMatrix2fv(location, 1, GL_FALSE, mat.data());
+		}
+
+		void uploadUniformMat3(const std::string& uniform, const Mat3& mat, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniformMatrix3fv(location, 1, GL_FALSE, mat.data());
+		}
+
+		void uploadUniformMat4(const std::string& uniform, const Mat4& mat, bool bind = false) {
+			GLuint location = _uniforms.find(uniform)->second;
+			if (bind) this->bind();
+			glUniformMatrix4fv(location, 1, GL_FALSE, mat.data());
 		}
 
 	};

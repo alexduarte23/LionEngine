@@ -1,4 +1,5 @@
 #include "../HeaderFiles/Shader.h"
+#include "../HeaderFiles/ErrorManager.h"
 
 namespace avt {
 
@@ -28,6 +29,10 @@ namespace avt {
 		glShaderSource(shaderId, 1, &shaderChar, 0);
 		glCompileShader(shaderId);
 
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not compile shader.");
+#endif
+
 		delete[] shaderChar;
 		return shaderId;
 	}
@@ -53,6 +58,10 @@ namespace avt {
 		}
 
 		glLinkProgram(_program);
+
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not link shader program.");
+#endif
 
 		for (auto& el : params._uniforms) { // Uniforms
 			auto index = glGetUniformLocation(_program, el.c_str());

@@ -95,7 +95,7 @@ void avt::RenderTargetTexture::renderQuad(Shader* shader, std::string textureUni
 	shader->bind();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _texID);
-	glUniform1i(shader->getUniform(textureUniform), 0); //check, might be wrong
+	shader->uploadUniformInt(textureUniform, 0);
 
 
 	glDisable(GL_DEPTH_TEST);
@@ -389,7 +389,7 @@ void avt::MultipleRenderTarget::renderQuad(Shader* shader, std::string textureUn
 	shader->bind();
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, colorBuffers[1]);
-	glUniform1i(shader->getUniform(textureUniform), 1); //check, might be wrong
+	shader->uploadUniformInt(textureUniform, 1);
 
 
 	glDisable(GL_DEPTH_TEST);

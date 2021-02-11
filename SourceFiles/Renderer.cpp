@@ -14,7 +14,7 @@ namespace avt {
 
 		ub.fill({ camera->viewMatrix(), camera->projMatrix()});
 
-		glUniformMatrix4fv(shader.getUniform(MODEL_MATRIX), 1, GL_FALSE, Mat4::identity().data());
+		shader.uploadUniformMat4(MODEL_MATRIX, Mat4::identity());
 		glDrawElements(GL_TRIANGLES, ib.count(), GL_UNSIGNED_BYTE, (GLvoid*)0);
 
 		shader.unbind();
@@ -49,8 +49,8 @@ namespace avt {
 		shader.bind();
 		ub.bind();
 
-		glUniform3f(shader.getUniform("LightPosition"), light->getPosition().x, light->getPosition().y, light->getPosition().z);
-		glUniform3f(shader.getUniform("LightColor"), light->getColor().x, light->getColor().y, light->getColor().z);
+		shader.uploadUniformVec3("LightPosition", light->getPosition());
+		shader.uploadUniformVec3("LightColor", light->getColor());
 		ub.fill({ camera->viewMatrix(), camera->projMatrix() });
 		drawNode(scene.getRoot(), shader, Mat4::identity());
 
@@ -80,7 +80,7 @@ namespace avt {
 			StencilPicker::prepareStencil(node->getStencilIndex());
 			
 			node->beforeDraw();
-			glUniformMatrix4fv(shader.getUniform(MODEL_MATRIX), 1, GL_FALSE, newWorldMat.data());
+			shader.uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 			glDrawArrays(GL_TRIANGLES, 0, mesh->vb().size());
 			//glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh->getVertices().size());
 			//glDrawElements(GL_TRIANGLES, mesh->ib().count(), GL_UNSIGNED_BYTE, (GLvoid*)0);

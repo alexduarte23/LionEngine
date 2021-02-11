@@ -38,6 +38,7 @@
 #include "StencilPicker.h"
 
 #include "CloudSystem.h"
+#include "TerrainPlane.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
 #include "Shadow.h"

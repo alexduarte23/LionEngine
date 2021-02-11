@@ -1,26 +1,9 @@
 #include <iostream>
-
-#include "../HeaderFiles/Engine.h"
-#include "../HeaderFiles/Globals.h"
-
 #include <vector>
 
-#include "../HeaderFiles/Shadow.h"
-#include "../HeaderFiles/TerrainPlane.h"
+#include "../HeaderFiles/Engine.h"
 
 
-class MyNodeCallback : public avt::SceneNodeCallback {
-public:
-	void beforeDraw() override {
-		//glDisable(GL_CULL_FACE);
-		//glDisable(GL_DEPTH_TEST);
-	}
-
-	void afterDraw() override {
-		//glEnable(GL_CULL_FACE);
-		//glEnable(GL_DEPTH_TEST);
-	}
-};
 
 class MyApp : public avt::App {
 private:
@@ -28,7 +11,6 @@ private:
 	avt::Renderer _renderer;
 	avt::UniformBuffer _ub;
 	avt::Scene _scene, _HUD;
-	MyNodeCallback nodeCallback;
 
 
 	avt::Shadow _shadow, _shadow2, _shadow3, _shadow4;
@@ -90,11 +72,6 @@ private:
 
 		auto appleM = _meshes.add("apple", new avt::Mesh("./Resources/Objects/apple.obj"));
 		appleM->setup();
-
-		/*auto bunnyIslandM = _meshes.add("bunnyIsland", new avt::Mesh("./Resources/Objects/bunnyIsland.obj"));
-		bunnyIslandM->setup();
-
-		*/
 
 		auto bushM = _meshes.add("bush", new avt::Mesh("./Resources/Objects/bush.obj"));
 		bushM->setup();
@@ -285,9 +262,9 @@ private:
 			.setFragmentShader("./Resources/shadowShaders/fragmentShadowShader.glsl")
 			.addInputs({ "inPosition", "inTexcoord", "inNormal", "inColor" })
 			.addUniforms({ "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5" })
-			.addUniforms({ "campfireSM1", "campfireSM2", "campfireSM3", "campfireSM4", "campfireSM5" })
-			.addUniforms({ "envLSM", "envSM", "campfirePos", "campfireColor", "envPos", "envColor", "AmbientColor" })
+			.addUniforms({ "envLSM", "campfirePos", "campfireColor", "envPos", "envColor", "AmbientColor" })
 			.addUniforms({ "EyePosition", "ModelMatrix" })
+			.addTextures({ "campfireSM1", "campfireSM2", "campfireSM3", "campfireSM4", "campfireSM5", "envSM" })
 			.addUniformBlock("CameraMatrices", 0);
 		_shader.create(params);
 
@@ -444,63 +421,31 @@ public:
 			_crosshair->setScale({ .8f, .8f, .8f });
 
 		}
-		/*
-		if (_rotating) {
-			_time2 += dt;
-			float k = (float)_time2 / _duration2;
-			_lightStruct->setRotation(avt::Quaternion({ 0,1.f,0.f }, k * 2 * avt::PI));
-			_lightStruct->rotateZ(avt::PI / 10);
-			if (_time2 > _duration2) {
-				_time2 = 0;
-				_rotating = false;
-				_lightStruct->setRotation(avt::Quaternion({ 1.f,0,0 }, avt::PI/10));
-				campfire.setIntensity(1.f);
-			}
-		}
-
-		if (_morebloom) { //bloom
-			_bloom->setBlurTex(1);
-			_morebloom = false;
-		}
-
-		if (_lessbloom) { //bloom
-			_bloom->setBlurTex(-1);
-			_lessbloom = false;
-		}
-		if (_turnOffOnBloom) {
-			_bloom->turnOffOnBloom();
-			_turnOffOnBloom = false;
-		}
-		*/
-		//campfire.setPosition(_light->pos().to3D());
-		//_fireEmitter->setTranslation(campfire.getPosition());
 
 		//Update Shader uniforms
 
-		campfire.updateLightSpaceMatrices(_shader, _shader.getUniform("campfireLSM1"), _shader.getUniform("campfireLSM2"),
-			_shader.getUniform("campfireLSM3"), _shader.getUniform("campfireLSM4"), _shader.getUniform("campfireLSM5"));
-		campfire.updateLightSpaceMatrices(_shaderClouds, _shaderClouds.getUniform("campfireLSM1"), _shaderClouds.getUniform("campfireLSM2"),
-			_shaderClouds.getUniform("campfireLSM3"), _shaderClouds.getUniform("campfireLSM4"), _shaderClouds.getUniform("campfireLSM5"));
+		campfire.updateLightSpaceMatrices(_shader, "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5");
+		campfire.updateLightSpaceMatrices(_shaderClouds, "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5");
 
-		campfire.updateLight(_shader, _shader.getUniform("campfirePos"), _shader.getUniform("campfireColor"));
-		campfire.updateLight(_shaderClouds, _shaderClouds.getUniform("campfirePos"), _shaderClouds.getUniform("campfireColor"));
+		campfire.updateLight(_shader, "campfirePos", "campfireColor");
+		campfire.updateLight(_shaderClouds, "campfirePos", "campfireColor");
 
-		env.updateLightSpaceMatrices(_shader, _shader.getUniform("envLSM"));
-		env.updateLightSpaceMatrices(_shaderClouds, _shader.getUniform("envLSM"));
+		env.updateLightSpaceMatrices(_shader, "envLSM");
+		env.updateLightSpaceMatrices(_shaderClouds, "envLSM");
 
-		env.updateLight(_shader, _shader.getUniform("envPos"), _shader.getUniform("envColor"));
-		env.updateLight(_shaderClouds, _shaderClouds.getUniform("envPos"), _shaderClouds.getUniform("envColor"));
+		env.updateLight(_shader, "envPos", "envColor");
+		env.updateLight(_shaderClouds, "envPos", "envColor");
 
 		avt::Vector3 camPos = _cams.get(_activeCam)->position();
 
 		_shader.bind();
-		glUniform3f(_shader.getUniform("EyePosition"), camPos.x, camPos.y, camPos.z);
-		glUniform3f(_shader.getUniform("AmbientColor"), ambient.x*ambientStrength, ambient.y * ambientStrength, ambient.z * ambientStrength);
+		_shader.uploadUniformVec3("EyePosition", camPos);
+		_shader.uploadUniformVec3("AmbientColor", ambientStrength * ambient);
 		_shader.unbind();
 		
 		_shaderClouds.bind();
-		glUniform3f(_shaderClouds.getUniform("EyePosition"), camPos.x, camPos.y, camPos.z);
-		glUniform3f(_shaderClouds.getUniform("AmbientColor"), ambient.x * ambientStrength, ambient.y * ambientStrength, ambient.z * ambientStrength);
+		_shaderClouds.uploadUniformVec3("EyePosition", camPos);
+		_shaderClouds.uploadUniformVec3("AmbientColor", ambientStrength * ambient);
 		_shaderClouds.unbind();
 		
 	}
@@ -513,11 +458,11 @@ public:
 		campfire.renderShadowMaps(_renderer, _scene, (unsigned int)winx, (unsigned int)winy);
 		env.renderShadowMaps(_renderer, _scene, (unsigned int)winx, (unsigned int)winy);
 
-		campfire.shadowMapTextureLoad(_shader, 0, _shader.getUniform("campfireSM1"), _shader.getUniform("campfireSM2"), _shader.getUniform("campfireSM3"), _shader.getUniform("campfireSM4"), _shader.getUniform("campfireSM5"));
-		campfire.shadowMapTextureLoad(_shaderClouds, 0, _shaderClouds.getUniform("campfireSM1"), _shaderClouds.getUniform("campfireSM2"), _shaderClouds.getUniform("campfireSM3"), _shaderClouds.getUniform("campfireSM4"), _shaderClouds.getUniform("campfireSM5"));
+		campfire.shadowMapTextureLoad(_shader, 0);
+		campfire.shadowMapTextureLoad(_shaderClouds, 0);
 
-		env.shadowMapTextureLoad(_shader, 5, _shader.getUniform("envSM"));
-		env.shadowMapTextureLoad(_shaderClouds, 5, _shaderClouds.getUniform("envSM"));
+		env.shadowMapTextureLoad(_shader, 5);
+		env.shadowMapTextureLoad(_shaderClouds, 5);
 
 		renderWithBloom(win);
 		//renderWithoutBloom(win);
@@ -589,37 +534,7 @@ public:
 				_cams.get("per")->lookAt(campfire.getPosition());
 			}
 			break;
-		/*
-		case GLFW_KEY_C:
-			_animating = !_animating;
-			break;
-		case GLFW_KEY_F:
-			_rotating = !_rotating;
-			break;
-		case GLFW_KEY_M:
-			_morebloom = !_morebloom;
-			break;
-		case GLFW_KEY_L:
-			_lessbloom = !_lessbloom;
-			break;
-		case GLFW_KEY_B:
-			_turnOffOnBloom = !_turnOffOnBloom;
-			break;
-		case GLFW_KEY_X:
-			_fireOn = !_fireOn;
-			_fireEmitter->toggle();
-			break;
-		case GLFW_KEY_ENTER:
-			_cloudSystem->createCloud();
-			break;
-		case GLFW_KEY_V:
-			_day = !_day;
-			_dayTransition = true;
-			break;
-		*/
 		}
-
-
 	}
 
 	void mouseButtonCallback(GLFWwindow* win, int button, int action, int mods) override {

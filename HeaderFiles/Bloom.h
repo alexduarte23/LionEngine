@@ -50,35 +50,9 @@ namespace avt {
 			params.setVertexShader("./Resources/bloomShaders/bloomFinalVertexshader.shader")
 				.setFragmentShader("./Resources/bloomShaders/bloomFinalFragmentshader.shader")
 				.addInputs({ "inVertex", "inTexcoord" })
-				.addUniforms({ "scene", "bloomBlur", "bloom", "exposure" });
+				.addTextures({ "scene", "bloomBlur" })
+				.addUniforms({ "bloom", "exposure" });
 			_ShaderBloomFinal.create(params);
-		}
-
-		void setDirectionBlur(bool horizontal) {
-			_ShaderGaussianBlur.bind();
-			glUniform1i(_ShaderGaussianBlur.getUniform("horizontal"), horizontal);
-			_ShaderGaussianBlur.unbind();
-		}
-
-		void setBloom(bool bloom) {
-			_ShaderBloomFinal.bind();
-			glUniform1i(_ShaderBloomFinal.getUniform("bloom"), bloom);
-			_ShaderBloomFinal.unbind();
-		}
-
-		void setExposure(float exposure) {
-			_ShaderBloomFinal.bind();
-			glUniform1f(_ShaderBloomFinal.getUniform("exposure"), exposure);
-			_ShaderBloomFinal.unbind();
-		}
-
-
-		void setTextures()
-		{
-			_ShaderBloomFinal.bind();
-			glUniform1i(_ShaderBloomFinal.getUniform("scene"), 0);
-			glUniform1i(_ShaderBloomFinal.getUniform("bloomBlur"), 1);
-			_ShaderBloomFinal.unbind();
 		}
 
 	public:
@@ -107,13 +81,13 @@ namespace avt {
 			for (unsigned int i = 0; i < _amount; i++)
 			{
 				_pongBlur.bindFramebuffer();
-				setDirectionBlur(horizontal);
+				_ShaderGaussianBlur.uploadUniformInt("horizontal", horizontal, true);
 				_pingBlur.renderQuad(&_ShaderGaussianBlur, "TexFramebuffer");
 				_pongBlur.unbindFramebuffer();
 				horizontal = !horizontal;
 
 				_pingBlur.bindFramebuffer();
-				setDirectionBlur(horizontal);
+				_ShaderGaussianBlur.uploadUniformInt("horizontal", horizontal, true);
 				_pongBlur.renderQuad(&_ShaderGaussianBlur, "TexFramebuffer");
 				_pingBlur.unbindFramebuffer();
 				horizontal = !horizontal;
@@ -134,11 +108,10 @@ namespace avt {
 
 		void renderBloomFinal() {
 
-			setBloom(_bloom);
-			setExposure(exposure);
-			setTextures();
-
 			_ShaderBloomFinal.bind();
+			_ShaderBloomFinal.uploadUniformBool("bloom", _bloom);
+			_ShaderBloomFinal.uploadUniformFloat("exposure", exposure);
+
 			_HDR.renderAll(_pingBlur.getId());
 			//_pingBlur.renderQuad(&_ShaderGaussianBlur, "TexFramebuffer");
 			//_HDR.renderQuad(&_ShaderBloomFinal, "scene");

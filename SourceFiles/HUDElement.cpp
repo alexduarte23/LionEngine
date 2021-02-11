@@ -40,7 +40,7 @@ namespace avt {
 
 		beforeDraw();
 		glDisable(GL_DEPTH_TEST);
-		glUniformMatrix4fv(curr_shader->getUniform(MODEL_MATRIX), 1, GL_FALSE, newWorldMat.data());
+		curr_shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glEnable(GL_DEPTH_TEST);
 		afterDraw();

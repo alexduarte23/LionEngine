@@ -30,9 +30,9 @@ namespace avt {
 			shadow.lookAt(avt::Vector3(0.0f, 0.0f, 0.0f));
 		}
 
-		void updateLightSpaceMatrices(Shader& shader, GLuint lsmuniform) {
+		void updateLightSpaceMatrices(Shader& shader, const std::string& lsmuniform) {
 			shader.bind();
-			glUniformMatrix4fv(lsmuniform, 1, GL_FALSE, (shadow._lightView.projMatrix() * shadow._lightView.viewMatrix()).data());
+			shader.uploadUniformMat4(lsmuniform, shadow._lightView.projMatrix() * shadow._lightView.viewMatrix());
 			shader.unbind();
 		}
 
@@ -40,11 +40,10 @@ namespace avt {
 			shadow.renderToDepthMap(renderer, scene, screenWidth, screenHeight);
 		}
 
-		void shadowMapTextureLoad(Shader& shader, int textureUnit, GLuint shadowUniform) {
+		void shadowMapTextureLoad(Shader& shader, int textureUnit) {
 			shader.bind();
 			glActiveTexture(GL_TEXTURE0 + textureUnit);
 			glBindTexture(GL_TEXTURE_2D, shadow.depthMap());
-			glUniform1i(shadowUniform, textureUnit);
 
 			glActiveTexture(GL_TEXTURE0);
 			shader.unbind();

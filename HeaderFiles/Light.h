@@ -39,10 +39,10 @@ namespace avt {
 			_intensity = intensity;
 		}
 
-		void updateLight(Shader& shader, GLuint lightPositionUniform, GLuint lightColorUniform) {
+		void updateLight(Shader& shader, const std::string& lightPositionUniform, const std::string& lightColorUniform) {
 			shader.bind();
-			glUniform3f(lightPositionUniform, _pos.x, _pos.y, _pos.z);
-			glUniform3f(lightColorUniform, _color.x*_intensity, _color.y*_intensity, _color.z*_intensity);
+			shader.uploadUniformVec3(lightPositionUniform, _pos);
+			shader.uploadUniformVec3(lightColorUniform, _intensity * _color);
 			shader.unbind();
 		}
 	};

@@ -85,7 +85,7 @@ namespace avt {
 
 		beforeDraw();
 		glDepthMask(GL_FALSE);
-		glUniformMatrix4fv(curr_shader->getUniform(MODEL_MATRIX), 1, GL_FALSE, newWorldMat.data());
+		curr_shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, (GLsizei)data.size());
 		glDepthMask(GL_TRUE);
 		afterDraw();
@@ -330,7 +330,7 @@ namespace avt {
 
 		beforeDraw();
 		glDepthMask(GL_FALSE);
-		glUniformMatrix4fv(curr_shader->getUniform(MODEL_MATRIX), 1, GL_FALSE, newWorldMat.data());
+		curr_shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, (GLsizei)data.size());
 		glDepthMask(GL_TRUE);
 		afterDraw();
