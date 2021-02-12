@@ -7,60 +7,56 @@ namespace avt {
 	void VertexArray::create() {
 		glGenVertexArrays(1, &_vaoID);
 		glBindVertexArray(_vaoID);
+		glBindVertexArray(0);
+
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not create Vertex Array.");
+#endif
 	}
 
 	VertexArray::~VertexArray() {
-		bind();
-		for (unsigned int i = 0; i < _num; i++) {
+		glBindVertexArray(_vaoID);
+		for (unsigned int i = 0; i < _attribNum; i++) {
 			glDisableVertexAttribArray(i);
 		}
 		glDeleteVertexArrays(1, &_vaoID);
-
-		unbind();
-	}
-
-	void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
-		bind();
-		vb.bind();
-
-		long long offset = 0;
-		for (int i = 0; i < layout.elements().size(); i++) {
-			const auto& el = layout.elements()[i];
-			glEnableVertexAttribArray(_num + i);
-			glVertexAttribPointer(_num + i, el.count, el.type, el.norm, layout.stride(), (const void*)offset); // buffer index, num items, type, norm, stride to next, offset
-			if (layout.divisor() > 0) {
-				glVertexAttribDivisor(_num + i, layout.divisor());
-			}
-			offset += (long long)el.count * el.typeSize;
-		}
-
-		_num += (unsigned int)layout.elements().size();
-
-#ifndef ERROR_CALLBACK
-		ErrorManager::checkOpenGLError("ERROR: Could not add Vertex Buffer to Vertex Array.");
-#endif
-	}
-
-	void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout, GLuint index) {
-		bind();
-		vb.bind();
-
-		const auto& el = layout.elements()[0];
-		glEnableVertexAttribArray(index);
-		glVertexAttribPointer(index, el.count, el.type, el.norm, layout.stride(), 0); // buffer index, num items, type, norm, stride to next, offset
-
-#ifndef ERROR_CALLBACK
-		ErrorManager::checkOpenGLError("ERROR: Could not add Vertex Buffer to Vertex Array.");
-#endif
-	}
-
-	void VertexArray::bind() const {
-		glBindVertexArray(_vaoID);
-	}
-
-
-	void VertexArray::unbind() const {
 		glBindVertexArray(0);
+
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not destroy Vertex Array.");
+#endif
+	}
+
+	void VertexArray::addVertexBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout, bool instanced) {
+		if (!_vaoID) return;
+
+		glBindVertexArray(_vaoID);
+		vb.bind();
+
+		for (const auto& el : layout) {
+			glEnableVertexAttribArray(_attribNum);
+			glVertexAttribPointer(_attribNum, el.count, el.GLtype, el.norm, layout.stride(), (const void*)el.offset); // buffer index, num items, type, norm, stride to next, offset
+			if (instanced) glVertexAttribDivisor(_attribNum, 1);
+			_attribNum++;
+		}
+		glBindVertexArray(0);
+
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not add Vertex Buffer to Vertex Array.");
+#endif
+	}
+
+	void VertexArray::setIndexBuffer(const IndexBuffer& ib) {
+		if (!_vaoID) return;
+
+		glBindVertexArray(_vaoID);
+		ib.bind();
+		glBindVertexArray(0);
+		_indexed = true;
+
+#ifndef ERROR_CALLBACK
+		ErrorManager::checkOpenGLError("ERROR: Could not add Index Buffer to Vertex Array.");
+#endif
 	}
 
 }

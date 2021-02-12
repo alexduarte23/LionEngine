@@ -55,23 +55,24 @@ namespace avt {
 	void CloudSystem::setupBuffers() {
 		_va.create();
 
-		VertexBufferLayout cube_layout;
-		cube_layout.add<Vector3>(); // POSITION
-		cube_layout.add<Vector2>(); // TEXTURE COORD
-		cube_layout.add<Vector3>(); // NORMAL
-		cube_layout.add<Vector3>(); // COLOR
+		VertexBufferLayout cube_layout({
+			{ShaderDataType::VEC3, "position"},
+			{ShaderDataType::VEC2, "texCoord"},
+			{ShaderDataType::VEC3, "normal"},
+			{ShaderDataType::VEC3, "color"}
+		});
 
 		_cube_vb.create(_cubeData.data(), _cubeData.size() * sizeof(Vertex));
-		_va.addBuffer(_cube_vb, cube_layout);
+		_va.addVertexBuffer(_cube_vb, cube_layout);
 		_cube_vb.unbind();
 
-		VertexBufferLayout instance_layout;
-		instance_layout.setDivisor(1);
-		instance_layout.add<Vector3>(); // POSITIONS
-		instance_layout.add<GLfloat>(); // SIZE
+		VertexBufferLayout instance_layout({
+			{ShaderDataType::VEC3, "position"},
+			{ShaderDataType::FLOAT, "size"}
+		});
 
 		_instance_vb.create(nullptr, (long long int)_maxCubes * sizeof(CloudInfo));
-		_va.addBuffer(_instance_vb, instance_layout);
+		_va.addVertexBuffer(_instance_vb, instance_layout, true);
 		_instance_vb.unbind();
 
 		_va.unbind();

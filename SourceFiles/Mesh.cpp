@@ -19,14 +19,15 @@ namespace avt {
 	void Mesh::setup() {
 		_vb.create(_meshData.data(), _meshData.size() * sizeof(Vertex));
 
-		VertexBufferLayout layout;
-		layout.add<GLfloat>(3); // POSITION
-		layout.add<GLfloat>(2); // TEXTURE COORD
-		layout.add<GLfloat>(3); // NORMAL
-		layout.add<GLfloat>(3); // COLOR
+		VertexBufferLayout layout({
+			{ShaderDataType::VEC3, "position"},
+			{ShaderDataType::VEC2, "texCoord"},
+			{ShaderDataType::VEC3, "normal"},
+			{ShaderDataType::VEC3, "color"}
+		});
 
 		_va.create();
-		_va.addBuffer(_vb, layout);
+		_va.addVertexBuffer(_vb, layout);
 
 		_va.unbind();
 		_vb.unbind();

@@ -16,12 +16,13 @@ namespace avt {
 
 		_va.create();
 
-		VertexBufferLayout layout;
-		layout.add<GLfloat>(3); // VERTICES
-		layout.add<GLfloat>(3); // COLORS
+		VertexBufferLayout layout({
+			{ShaderDataType::VEC3, "position"},
+			{ShaderDataType::VEC3, "color"}
+		});
 
 		_vb.create(QUAD_STRIP, sizeof(QUAD_STRIP));
-		_va.addBuffer(_vb, layout);
+		_va.addVertexBuffer(_vb, layout);
 
 		_vb.unbind();
 		_va.unbind();

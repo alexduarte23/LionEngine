@@ -16,23 +16,24 @@ namespace avt {
 
 		_va.create();
 
-		VertexBufferLayout quad_layout;
-		quad_layout.add<GLfloat>(3); // VERTICES
-		quad_layout.add<GLfloat>(2); // TEXTURE COORDS
+		VertexBufferLayout quad_layout({
+			{ShaderDataType::VEC3, "vertex"},
+			{ShaderDataType::VEC2, "texCoord"}
+		});
 
 		_quad_vb.create(QUAD_STRIP, sizeof(QUAD_STRIP));
-		_va.addBuffer(_quad_vb, quad_layout);
+		_va.addVertexBuffer(_quad_vb, quad_layout);
 		_quad_vb.unbind();
 
-		VertexBufferLayout instance_layout;
-		instance_layout.setDivisor(1);
-		instance_layout.add<GLfloat>(3); // POSITIONS
-		instance_layout.add<GLfloat>(4); // COLOR
-		instance_layout.add<GLfloat>(1); // SIZE
-		instance_layout.add<GLfloat>(1); // ROT
+		VertexBufferLayout instance_layout({
+			{ShaderDataType::VEC3, "position"},
+			{ShaderDataType::VEC4, "color"},
+			{ShaderDataType::FLOAT, "size"},
+			{ShaderDataType::FLOAT, "rot"}
+		});
 
 		_instance_vb.create(nullptr, (long long int)_maxParticles * sizeof(ParticleBody));
-		_va.addBuffer(_instance_vb, instance_layout);
+		_va.addVertexBuffer(_instance_vb, instance_layout, true);
 		_instance_vb.unbind();
 
 		_va.unbind();
