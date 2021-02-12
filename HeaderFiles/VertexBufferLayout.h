@@ -16,7 +16,7 @@ namespace avt {
 
 	struct LayoutElement {
 		std::string name;
-		ShaderDataType shaderType;
+		ShaderDataType type;
 		long long int offset;
 		GLint count;
 		GLenum GLtype;
@@ -24,7 +24,7 @@ namespace avt {
 		GLboolean norm;
 
 		LayoutElement(ShaderDataType type, const std::string& name, bool norm = false)
-			: name(name), shaderType(type), offset(0), count(getTypeCount(type)), GLtype(getTypeEnum(type)), typeSize(getTypeSize(type)), norm(norm) {}
+			: name(name), type(type), offset(0), count(getTypeCount(type)), GLtype(getTypeEnum(type)), typeSize(getTypeSize(type)), norm(norm) {}
 
 		static GLint getTypeSize(ShaderDataType type) {
 			switch (type) {

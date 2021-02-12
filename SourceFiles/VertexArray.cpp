@@ -34,10 +34,33 @@ namespace avt {
 		vb.bind();
 
 		for (const auto& el : layout) {
-			glEnableVertexAttribArray(_attribNum);
-			glVertexAttribPointer(_attribNum, el.count, el.GLtype, el.norm, layout.stride(), (const void*)el.offset); // buffer index, num items, type, norm, stride to next, offset
-			if (instanced) glVertexAttribDivisor(_attribNum, 1);
-			_attribNum++;
+			switch (el.type) {
+			case avt::ShaderDataType::INT:
+			case avt::ShaderDataType::BOOL:
+				glEnableVertexAttribArray(_attribNum);
+				glVertexAttribIPointer(_attribNum, el.count, el.GLtype, layout.stride(), (const void*)el.offset);
+				if (instanced) glVertexAttribDivisor(_attribNum, 1);
+				_attribNum++;
+				break;
+			case avt::ShaderDataType::FLOAT:
+			case avt::ShaderDataType::VEC2:
+			case avt::ShaderDataType::VEC3:
+			case avt::ShaderDataType::VEC4:
+				glEnableVertexAttribArray(_attribNum);
+				glVertexAttribPointer(_attribNum, el.count, el.GLtype, el.norm, layout.stride(), (const void*)el.offset);
+				if (instanced) glVertexAttribDivisor(_attribNum, 1);
+				_attribNum++;
+				break;
+			case avt::ShaderDataType::MAT2:
+			case avt::ShaderDataType::MAT3:
+			case avt::ShaderDataType::MAT4:
+				for (uint8_t i = 0; i < el.count; i++) {
+					glEnableVertexAttribArray(_attribNum);
+					glVertexAttribPointer(_attribNum, el.count, el.GLtype, el.norm, layout.stride(), (const void*)(el.offset + sizeof(GLfloat) * el.count * i));
+					if (instanced) glVertexAttribDivisor(_attribNum, 1);
+					_attribNum++;
+				}
+			}
 		}
 		glBindVertexArray(0);
 
