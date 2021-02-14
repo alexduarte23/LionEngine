@@ -102,11 +102,11 @@ namespace avt {
 			return _shader;
 		}
 
-		virtual void draw(const Mat4& worldMatrix, Light* light) {
-			if (_shader) draw(_shader, worldMatrix, light);
+		virtual void draw(const Mat4& worldMatrix) {
+			if (_shader) draw(_shader, worldMatrix);
 		}
 
-		virtual void draw(Shader* shader, const Mat4& worldMatrix, Light* light);
+		virtual void draw(Shader* shader, const Mat4& worldMatrix);
 
 
 		/*void setTransform(const Mat4& transform) {

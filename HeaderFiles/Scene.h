@@ -33,11 +33,11 @@ namespace avt {
 			return _root->getShader();
 		}
 
-		void draw(UniformBuffer& ub, Camera* camera, Light* light) {
+		void draw(UniformBuffer& ub, Camera* camera) {
 			ub.bind();
 
 			ub.fill({ camera->viewMatrix(), camera->projMatrix() });
-			_root->draw(Mat4::identity(), light);
+			_root->draw(Mat4::identity());
 
 			ub.unbind();
 		}

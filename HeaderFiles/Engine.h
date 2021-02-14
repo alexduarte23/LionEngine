@@ -25,8 +25,6 @@
 
 #include "Scene.h"
 #include "SceneNode.h"
-#include "apple.h"
-#include "Bunny.h"
 
 
 #include "Manager.h"

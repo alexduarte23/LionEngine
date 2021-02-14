@@ -20,7 +20,7 @@ namespace avt {
 		~HUDElement () {}
 
 
-		void draw(Shader* shader, const Mat4& worldMatrix, Light* light) override;
+		void draw(Shader* shader, const Mat4& worldMatrix) override;
 
 
 	};

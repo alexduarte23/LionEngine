@@ -42,7 +42,7 @@ namespace avt {
 			return _color;
 		}
 
-		void draw(Shader* shader, const Mat4& worldMatrix, Light* light) override;
+		void draw(Shader* shader, const Mat4& worldMatrix) override;
 
 	};
 

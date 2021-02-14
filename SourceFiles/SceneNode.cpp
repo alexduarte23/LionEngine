@@ -7,7 +7,7 @@
 
 namespace avt {
 
-	void SceneNode::draw(Shader* shader, const Mat4& worldMatrix, Light* light) {
+	void SceneNode::draw(Shader* shader, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * getTransform();
 		Shader* curr_shader = _shader ? _shader : shader;
 		if (_shader) {
@@ -42,7 +42,7 @@ namespace avt {
 		}
 
 		for (auto childNode : _nodes) {
-			childNode->draw(curr_shader, newWorldMat, light);
+			childNode->draw(curr_shader, newWorldMat);
 		}
 
 		if (_shader) {

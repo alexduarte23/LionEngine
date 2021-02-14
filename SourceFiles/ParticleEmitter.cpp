@@ -63,7 +63,7 @@ namespace avt {
 		return true;
 	}
 
-	void ParticleEmitter::draw(Shader* shader, const Mat4& worldMatrix, Light* light) {
+	void ParticleEmitter::draw(Shader* shader, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * getTransform();
 		Shader* curr_shader = getShader() ? getShader() : shader;
 		if (getShader()) {
@@ -309,7 +309,7 @@ namespace avt {
 		}
 	}
 
-	void FireEmitter::draw(Shader* shader, const Mat4& worldMatrix, Light* light) {
+	void FireEmitter::draw(Shader* shader, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * getTransform();
 		Shader* curr_shader = getShader() ? getShader() : shader;
 		curr_shader->bind();

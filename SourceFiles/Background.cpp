@@ -1,6 +1,7 @@
 #include "../HeaderFiles/Background.h"
 
 #include "../HeaderFiles/Shader.h"
+#include "../HeaderFiles/StencilPicker.h"
 
 namespace avt {
 
@@ -29,13 +30,15 @@ namespace avt {
 
 	}
 
-	void Background::draw(Shader* shader, const Mat4& worldMatrix, Light* light) {
+	void Background::draw(Shader* shader, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * getTransform();
 		if (getShader()) {
 			getShader()->bind();
 		}
 
 		_va.bind();
+
+		StencilPicker::prepareStencil(getStencilIndex());
 
 		beforeDraw();
 		glDepthMask(GL_FALSE);

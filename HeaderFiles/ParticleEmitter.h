@@ -101,7 +101,7 @@ namespace avt {
 		}
 
 
-		void draw(Shader* shader, const Mat4& worldMatrix, Light* light) override;
+		void draw(Shader* shader, const Mat4& worldMatrix) override;
 
 	};
 
@@ -223,7 +223,7 @@ namespace avt {
 
 		~FireEmitter() {}
 
-		void draw(Shader* shader, const Mat4& worldMatrix, Light* light) override;
+		void draw(Shader* shader, const Mat4& worldMatrix) override;
 
 
 	};

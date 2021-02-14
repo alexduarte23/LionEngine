@@ -29,7 +29,7 @@ namespace avt {
 
 	}
 
-	void HUDElement::draw(Shader* shader, const Mat4& worldMatrix, Light* light) {
+	void HUDElement::draw(Shader* shader, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * getTransform();
 		Shader* curr_shader = getShader() ? getShader() : shader;
 		if (getShader()) {

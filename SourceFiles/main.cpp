@@ -7,224 +7,59 @@
 
 class MyApp : public avt::App {
 private:
-	avt::Shader _shader, _shaderFire, _shaderParticles, _shaderClouds, _shaderHUD, _shaderBG;
+	avt::Shader _shader, _shaderFire, _shaderHUD, _shaderBG;
 	avt::Renderer _renderer;
 	avt::UniformBuffer _ub;
 	avt::Scene _scene, _HUD;
-
-
-	avt::Shadow _shadow, _shadow2, _shadow3, _shadow4;
-	avt::Bloom* _bloom = nullptr;
-
-	avt::PointLight campfire;
-	avt::DirectionalLight env;
 
 	avt::Manager<avt::Mesh> _meshes;
 	avt::Manager<avt::Camera> _cams;
 
 	bool _cursorVisible = false;
-	bool _fireOn = true;
-	float _campfireBaseIntensity = 1.f;
 
-
-	avt::ParticleEmitter* _fireEmitter = nullptr, * _dustEmitter = nullptr, * _fireflyEmitter = nullptr;
+	avt::ParticleEmitter* _fireEmitter = nullptr;
 	avt::Background* _background = nullptr;
 	avt::SceneNode* _crosshair = nullptr;
-	avt::SceneNode* _tree = nullptr, * _tree2 = nullptr, * _tree3 = nullptr, * _lightStruct = nullptr, * _light = nullptr, * _floor = nullptr, * _cloud = nullptr, * _floor2 = nullptr;
-	std::vector<avt::Apple*> _apples;
-	std::vector<avt::Bunny*> _bunny;
-	avt::CloudSystem* _cloudSystem = nullptr;
 	std::string _activeCam = "per";
 
-	avt::Vector3 ambient;
-	float ambientStrength = 0.05f;
-	bool _day = false;
-	bool _dayTransition = false;
-	float _transitionDuration = 1.f;
-	float _transitionTime = 0;
-	avt::Vector3 _dayColor = { 1.f, 1.f, 1.f };
-	avt::Vector3 _dayBackColor = { .0916f, .631f, .58f };
-	float _dayStrength = 0.15f;
-	avt::Vector3 _nightColor = { 0.035f, 0.08f, 0.2f };
-	avt::Vector3 _nightBackColor = { 0.0f, 0.0f, 0.001f };
-	float _nightStrength = 0.05f;
-
-	const float _duration = 100000, _duration2 = 6;
-	double _time = 0, _time2 = 0, _time3 = 0;
-	bool _animating = true, _rotating = false, _selecting = false, _morebloom = false, _lessbloom = false, _turnOffOnBloom = false, _animatingApples = false, _isBunny = true;
-
-	unsigned int _selected = -1; //stencil index of the currently selected scene node - mouse picking
+	double _time = 0;
 
 	void createScene() {
-
 		avt::StencilPicker::enable();
 
-		// MESHES -------------------
-		/*
-		auto treeM = _meshes.add("tree", new avt::Mesh("./Resources/Objects/treeNormal.obj"));
-		treeM->colorAll({0.2f, 0.6f, 0.2f});
-		treeM->setup();
-		*/
-
-		auto floorM = _meshes.add("floor", new avt::Mesh("./Resources/cube_vtn_flat.obj"));
-		auto islandM = _meshes.add("island", new avt::Mesh("./Resources/Objects/finalIsland.obj"));
-		islandM->setup();
-
-		auto appleM = _meshes.add("apple", new avt::Mesh("./Resources/Objects/apple.obj"));
-		appleM->setup();
-
-		auto bushM = _meshes.add("bush", new avt::Mesh("./Resources/Objects/bush.obj"));
-		bushM->setup();
-
-		auto bunnyearLM = _meshes.add("bunnyLeftEar", new avt::Mesh("./Resources/Objects/leftear.obj"));
-		bunnyearLM->setup();
-		auto bunnyearRM = _meshes.add("bunnyRightEar", new avt::Mesh("./Resources/Objects/rightear.obj"));
-		bunnyearRM->setup();
-		auto bunnytailM = _meshes.add("bunnyTail", new avt::Mesh("./Resources/Objects/tail.obj"));
-		bunnytailM->setup();
-
-		auto fireplaceM = _meshes.add("fireplace", new avt::Mesh("./Resources/Objects/fireplace3.obj"));
-		fireplaceM->setup();
-
-		
-		auto lightM = _meshes.add("moon", new avt::Mesh("./Resources/Objects/sun_moon.obj"));
-		lightM->applyTransform(avt::Mat4::scale({ 0.5f, 0.5f, 0.5f }));
-		lightM->colorAll({ 1.f, 1.f, 1.f });
-		lightM->setup();
+		// MESHES
+		auto cubeM = _meshes.add("cube", new avt::Mesh("./Resources/Objects/cube_vtn_flat.obj"));
+		cubeM->setup();
 
 		auto colorCubeM = _meshes.add("colorCube", new avt::Mesh("./Resources/Objects/colourscube.obj"));
 		colorCubeM->setup();
 
-		auto tentM = _meshes.add("tent", new avt::Mesh("./Resources/Objects/tent.obj"));
-		tentM->setup();
-
-		//CAMS
-		_ub.create(2 * 16 * sizeof(GLfloat), 0); // change
-		_ub.unbind();
-
+		// SCENE
 		_scene.setShader(&_shader);
-
-		// SCENE ----------------------------
-		_background = new avt::Background(_nightBackColor);
+		
+		// SCENE - BACKGROUND
+		_background = new avt::Background({.5f, .5f, .5f});
 		_scene.addNode(_background);
 		_background->setShader(&_shaderBG);
 
-		_lightStruct = _scene.createNode();
+		// SCENE - OPAQUE
+		auto cube = _scene.createNode(colorCubeM);
 
-		_light = _lightStruct->createNode();
-		//_light->setTranslation(_lights.get("sun")->getPosition());
-		_light->setTranslation(campfire.getPosition());
-		//_lightStruct->setRotation(avt::Quaternion({ 0,0,1.f }, avt::PI/10));
-
-		auto island = _scene.createNode(islandM);
-		island->translate({ 5.f, -3.f, -10.5f });
-		island->scale({ 1.f, 1.f, 1.f });
-
-		createAppleTree(island, appleM);
-
-		auto tent = island->createNode(tentM);
-		avt::StencilPicker::addTarget(tent, "tent");
-
-		createBunny(bushM, island, bunnyearLM, bunnyearRM, bunnytailM);
-
-		auto fireplace = island->createNode(fireplaceM);
-		fireplace->translate({ -4.f,1.3f,6.5f });
-		//colorCube->rotateY(-avt::PI/2);
-		fireplace->scale({ .25f,.25f,.25f });
-		avt::StencilPicker::addTarget(fireplace, "fire");
-
-		_cloudSystem = new avt::CloudSystem();
-		_scene.addNode(_cloudSystem);
-		_cloudSystem->setShader(&_shaderClouds);
-		_cloudSystem->translate({ 15.f,35.f,0 });
-		_cloudSystem->scale({ 2.5f,2.5f,2.5f });
-
+		// SCENE - TRANSPARENT
 		_fireEmitter = new avt::FireEmitter();
 		avt::StencilPicker::addTarget(_fireEmitter, "fire");
 		_fireEmitter->setShader(&_shaderFire);
 		_fireEmitter->scale({ .9f, .9f, .9f });
-		_fireEmitter->translate(campfire.getPosition() + avt::Vector3(0,-.5f,0));
+		_fireEmitter->translate({ 5.f, 0, 0 });
 		_scene.addNode(_fireEmitter); // scene deletes nodes when destroyed
 
-		_dustEmitter = new avt::DustEmitter(10, 5);
-		_dustEmitter->setShader(&_shaderParticles);
-		_dustEmitter->translate({10.f,-1.f,-17.f});
-		_scene.addNode(_dustEmitter); // scene deletes nodes when destroyed
-
-		_fireflyEmitter = new avt::FireflyEmitter(5, 2);
-		_fireflyEmitter->setShader(&_shaderParticles);
-		_fireflyEmitter->translate({ 24.f,8.f,-13.f });
-		_scene.addNode(_fireflyEmitter); // scene deletes nodes when destroyed
-
-		env.setPosition(_light->pos().to3D() - _light->pos().to3D() + avt::Vector3(6.0f, 25.f, 0.0f));
-
-
+		// HUD
 		_HUD.setShader(&_shaderHUD);
 
 		_crosshair = _HUD.addNode(new avt::HUDElement("Resources/textures/crosshair161.png"));
 		_crosshair->scale({ .5f, .5f, .5f });
-
-
-#ifndef ERROR_CALLBACK
-		avt::ErrorManager::checkOpenGLError("ERROR: Could not create VAOs and VBOs.");
-#endif
 	}
 
-	void createBunny(avt::Mesh* bushM, avt::SceneNode* island, avt::Mesh* bunnyearLM, avt::Mesh* bunnyearRM, avt::Mesh* bunnytailM)
-	{
-
-		auto bush = new avt::Bunny();
-		bush->setMesh(bushM);
-		island->addNode(bush);
-		bush->translate({ 0.f,0.f,0.f });
-		bush->setPosition({ 0.f,0.f,0.f });
-		_bunny.push_back(bush);
-
-		auto bunnyEarL = new avt::Bunny();
-		bunnyEarL->setMesh(bunnyearLM);
-		bush->addNode(bunnyEarL);
-		//bunnyIsland->addNode(bunnyEarL);
-
-		bunnyEarL->translate({ 0.f,-0.7f,0.7f });
-		bunnyEarL->setPosition({ 0.f,-0.7f,0.7f });
-		_bunny.push_back(bunnyEarL);
-
-		auto bunnyEarR = new avt::Bunny();
-		bunnyEarR->setMesh(bunnyearRM);
-		bush->addNode(bunnyEarR);
-
-		bunnyEarR->translate({ 0.f,-0.7f,0.7f });
-		bunnyEarR->setPosition({ 0.f,-0.7f,0.7f });
-		_bunny.push_back(bunnyEarR);
-
-
-		auto bunnyTail = new avt::Bunny();
-		bunnyTail->setMesh(bunnytailM);
-		bush->addNode(bunnyTail);
-
-		bunnyTail->translate({ 0.4f,0.f,0.f });
-		bunnyTail->setPosition({ 0.4f,0.f,0.f });
-		_bunny.push_back(bunnyTail);
-
-		avt::StencilPicker::addTarget(bush, "bunny");
-	}
-
-	void createAppleTree(avt::SceneNode * island, avt::Mesh* appleM) {
-
-		avt::Apple* apple;
-		std::vector<avt::Vector3> applePositions = { { -3.8f, -2.5f, -0.2f } , { -2.3f, -1.5f, 1.f } , { 0.3f, 0.f, 0.0f }, { 1.5f, -2.5f, 0.0f } }; //7 height
-		std::vector<float> heights = {5.1f, 5.5f, 7.0f, 4.3f};
-		for (int i = 0; i < 4; i++) {
-			apple = new avt::Apple();
-			apple->setMesh(appleM);
-			island->addNode(apple);
-			apple->setPosition(applePositions.at(i));
-			apple->setHeight(heights.at(i));
-			apple->translate( applePositions.at(i));
-			_apples.push_back(apple);
-			avt::StencilPicker::addTarget(apple, "apple" + std::to_string(i+1));
-		}
-	}
 		
 
 	void processKeyInput(GLFWwindow* win, double dt) {
@@ -236,18 +71,15 @@ private:
 		if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS) move.y += 1;
 		if (glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) move.y -= 1;
 
-		_cams.get("ort")->processMove(move, (float)dt);
 		_cams.get("per")->processMove(move, (float)dt);
 	}
 
 	void processMouseMovement(GLFWwindow* win, const avt::Vector2& lastCursor, const avt::Vector2& newCursor, double  dt) {
 		auto offset = newCursor - lastCursor;
 		if (!_cursorVisible) { // free move
-			_cams.get("ort")->processOrbit(offset, (float)dt, true);
 			_cams.get("per")->processOrbit(offset, (float)dt, true);
 
 		} else if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) { // drag move
-			_cams.get("ort")->processOrbit(offset, (float)dt);
 			_cams.get("per")->processOrbit(offset, (float)dt);
 
 		}
@@ -255,38 +87,26 @@ private:
 	}
 
 	void createShaders() {
+		_ub.create(2 * (long long)avt::LayoutElement::getTypeSize(avt::ShaderDataType::MAT4), 0); // change
+		_ub.unbind();
 
 		// create regular mesh shader
 		avt::ShaderParams params;
-		params.setVertexShader("./Resources/shadowShaders/vertexShadowShader.glsl")
-			.setFragmentShader("./Resources/shadowShaders/fragmentShadowShader.glsl")
-			.addInputs({ "inPosition", "inTexcoord", "inNormal", "inColor" })
-			.addUniforms({ "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5" })
-			.addUniforms({ "envLSM", "campfirePos", "campfireColor", "envPos", "envColor", "AmbientColor" })
-			.addUniforms({ "EyePosition", "ModelMatrix" })
-			.addTextures({ "campfireSM1", "campfireSM2", "campfireSM3", "campfireSM4", "campfireSM5", "envSM" })
+		params.setVertexShader("./Resources/shaders/basic-vs.glsl")
+			.setFragmentShader("./Resources/shaders/basic-fs.glsl")
+			.addInputs({ "position", "texCoord", "normal", "color" })
+			.addUniform("ModelMatrix")
 			.addUniformBlock("CameraMatrices", 0);
 		_shader.create(params);
 
-		// create clouds shader, simular to mesh shader but with instancing
-		params.setVertexShader("./Resources/shadowShaders/vertexShadowCloudsShader.glsl")
-			.addInputs({ "inOffset", "inSize" }, 4);
-		_shaderClouds.create(params);
-
-
 		// create fire shader
 		params.clear()
-			.setVertexShader("./Resources/particleShaders/particles-vs.glsl")
-			.setFragmentShader("./Resources/particleShaders/particles-fs.glsl")
+			.setVertexShader("./Resources/shaders/particles-vs.glsl")
+			.setFragmentShader("./Resources/shaders/fire-fs.glsl")
 			.addInputs({ "in_vertex", "in_texCoord", "in_pos", "in_color", "in_size", "in_rot" })
 			.addUniform("ModelMatrix")
-			.addTexture("in_texture", 0)
+			.addTextures({ "in_texture", "in_dissolveMap" })
 			.addUniformBlock("SharedMatrices", 0);
-		_shaderParticles.create(params);
-
-		// create fire shader
-		params.setFragmentShader("./Resources/particleShaders/fire-fs.glsl")
-			.addTexture("in_dissolveMap", 1);
 		_shaderFire.create(params);
 
 		// create hud shader
@@ -315,38 +135,13 @@ private:
 		float aspect = winx / (float)winy;
 
 		auto camP = new avt::PerspectiveCamera(60.f, aspect, 0.1f, 200.0f, avt::Vector3(0, 5.f, 10.f));
-		auto camO = new avt::OrthographicCamera(-20.0f, 20.0f, -20.0f / aspect, 20.0f / aspect, 0.1f, 200.0f, avt::Vector3(0, 5.f, 10.f));
 		auto camHUD = new avt::OrthographicCamera(-10.0f, 10.0f, -10.0f / aspect, 10.0f / aspect, 0.1f, 100.0f, avt::Vector3(0, 0, 10.f));
-		camP->lookAt(campfire.getPosition());
-		camO->lookAt(campfire.getPosition());
 		camP->setMoveSpeed(8.f);
-		camO->setMoveSpeed(8.f);
 
 		_cams.add("per", camP);
-		_cams.add("ort", camO);
 		_cams.add("HUD", camHUD);
 
-	}
 
-	void createShadows() {
-		campfire.setupShadows();
-		env.setupShadows();
-	}
-
-	void createLights() {
-		campfire = avt::PointLight({ 1.f, -1.f, -3.9f }, { 1.f, 0.5f, 0.f });
-		campfire.setIntensity(2.0f);
-		env = avt::DirectionalLight({0.0f, 50.0f, 0.0f }, _nightColor);
-		env.setIntensity(_nightStrength);
-		ambient = _nightColor;
-	}
-
-	void createBloom(GLFWwindow* win) {
-		int winx, winy;
-		glfwGetWindowSize(win, &winx, &winy);
-
-		_bloom = new avt::Bloom();
-		_bloom->create(winx, winy);
 	}
 
 public:
@@ -356,10 +151,7 @@ public:
 	~MyApp() {}
 
 	void initCallback(GLFWwindow* win) override {
-		createLights();
 		createCams(win);
-		createShadows();
-		createBloom(win);
 		createShaders();
 		createScene();
 	}
@@ -370,157 +162,38 @@ public:
 	}
 
 	void updateCallback(GLFWwindow* win, double dt) override {
-		
 		_time += dt;
 
 		_fireEmitter->update(dt);
-		_dustEmitter->update(dt);
-		_fireflyEmitter->update(dt);
-		_cloudSystem->update(dt);
-
-		for(int i = 0; i < 4; i++)
-			_apples.at(i)->animate((float)dt);
-
-		_bunny.at(0)->animateBush();
-		_bunny.at(1)->animateLeftEar();
-		_bunny.at(2)->animateRightEar();
-		_bunny.at(3)->animateTail();
-		
-
-		float speed = 2.0f;
-		if (_fireOn && _campfireBaseIntensity != 2.0) {
-			_campfireBaseIntensity = min(campfire.getIntensity() + (float)dt * speed, 2.0f);
-			campfire.setIntensity(_campfireBaseIntensity);
-		}
-		else if (_fireOn && _campfireBaseIntensity == 2.0) {
-			campfire.setIntensity(2.0f + 0.2f * (float)sin(_time * 15) + 0.2f * (float)sin(_time * 10));
-		}
-		else {
-			_campfireBaseIntensity = max(campfire.getIntensity() - (float)dt * speed, 0);
-			campfire.setIntensity(_campfireBaseIntensity);
-		}
-		if (_time > _duration) {
-			_time = 0;
-		}
-
-		if (_dayTransition) {
-			_transitionTime += (float)dt;
-			float p = clamp(_transitionTime / _transitionDuration, 0, 1);
-			float k =  _day ? p : 1.f - p;
-			if (_transitionTime >= _transitionDuration) {
-				_transitionTime = 0;
-				_dayTransition = false;
-			}
-			transitionLight(k);
-		}
 
 		if (avt::StencilPicker::getLastPick().first == nullptr && avt::StencilPicker::getLastPick().second == "") {
 			_crosshair->setScale({ .5f, .5f, .5f });
-		}
-		else {
+		} else {
 			_crosshair->setScale({ .8f, .8f, .8f });
-
 		}
-
-		//Update Shader uniforms
-
-		campfire.updateLightSpaceMatrices(_shader, "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5");
-		campfire.updateLightSpaceMatrices(_shaderClouds, "campfireLSM1", "campfireLSM2", "campfireLSM3", "campfireLSM4", "campfireLSM5");
-
-		campfire.updateLight(_shader, "campfirePos", "campfireColor");
-		campfire.updateLight(_shaderClouds, "campfirePos", "campfireColor");
-
-		env.updateLightSpaceMatrices(_shader, "envLSM");
-		env.updateLightSpaceMatrices(_shaderClouds, "envLSM");
-
-		env.updateLight(_shader, "envPos", "envColor");
-		env.updateLight(_shaderClouds, "envPos", "envColor");
-
-		avt::Vector3 camPos = _cams.get(_activeCam)->position();
-
-		_shader.bind();
-		_shader.uploadUniformVec3("EyePosition", camPos);
-		_shader.uploadUniformVec3("AmbientColor", ambientStrength * ambient);
-		_shader.unbind();
-		
-		_shaderClouds.bind();
-		_shaderClouds.uploadUniformVec3("EyePosition", camPos);
-		_shaderClouds.uploadUniformVec3("AmbientColor", ambientStrength * ambient);
-		_shaderClouds.unbind();
-		
 	}
 
 	void displayCallback(GLFWwindow* win, double dt) override {
-		int winx, winy;
-		glfwGetWindowSize(win, &winx, &winy);
 		_renderer.clear();
 
-		campfire.renderShadowMaps(_renderer, _scene, (unsigned int)winx, (unsigned int)winy);
-		env.renderShadowMaps(_renderer, _scene, (unsigned int)winx, (unsigned int)winy);
-
-		campfire.shadowMapTextureLoad(_shader, 0);
-		campfire.shadowMapTextureLoad(_shaderClouds, 0);
-
-		env.shadowMapTextureLoad(_shader, 5);
-		env.shadowMapTextureLoad(_shaderClouds, 5);
-
-		renderWithBloom(win);
-		//renderWithoutBloom(win);
-
-		_HUD.draw(_ub, _cams.get("HUD"), nullptr);
-	}
-
-	void transitionLight(float k) {
-		env.setColor(k * _dayColor + (1.f - k) * _nightColor);
-		env.setIntensity((k * _dayStrength + (1.f - k) * _nightStrength) * 5.f);
-		ambient = k * _dayColor + (1.f - k) * _nightColor;
-		ambientStrength = k * 2*_dayStrength + (1.f - k) * _nightStrength;
-		_background->setColor(k * _dayBackColor + (1.f - k) * _nightBackColor);
-	}
-
-	void renderWithBloom(GLFWwindow* win) {
-		_bloom->bindHDR();
-		_scene.draw(_ub, _cams.get(_activeCam), &campfire);
-
-		// stencil is lost after unbindHDR so this stores internally the pick
-		if (_cursorVisible) avt::StencilPicker::getTargetOnCursor(win);
-		else				avt::StencilPicker::getTargetOnCenter(win);
-
-		_bloom->unbindHDR();
-
-		_bloom->bindPingBlur();
-		_bloom->renderHDR();
-		_bloom->unbindPingBlur();
-
-		_bloom->renderBlur();
-
-		_bloom->renderBloomFinal();
-	}
-
-	void renderWithoutBloom(GLFWwindow* win) {
-		_scene.draw(_ub, _cams.get(_activeCam), &campfire);
+		_scene.draw(_ub, _cams.get(_activeCam));
 
 		if (_cursorVisible) avt::StencilPicker::getTargetOnCursor(win);
 		else				avt::StencilPicker::getTargetOnCenter(win);
+
+		_HUD.draw(_ub, _cams.get("HUD"));
 	}
 
 	void windowResizeCallback(GLFWwindow* win, int w, int h) override {
 		glViewport(0, 0, w, h);
-		if (_cams.size() == 3) {
-			_cams.get("ort")->resize(w, h);
-			_cams.get("per")->resize(w, h);
-			_cams.get("HUD")->resize(w, h);
-		}
-		_bloom->create(w,h);
+		_cams.get("per")->resize(w, h);
+		_cams.get("HUD")->resize(w, h);
 	}
 
 	void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods) override {
 		if (action != GLFW_PRESS) return;
 
 		switch (key) {
-		case GLFW_KEY_P:
-			_activeCam = _activeCam == "ort" ? "per" : "ort";
-			break;
 		case GLFW_KEY_ESCAPE:
 			_cursorVisible = !_cursorVisible;
 			if (_cursorVisible) glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -528,10 +201,8 @@ public:
 			break;
 		case GLFW_KEY_0:
 			if (_cams.size() == 3) {
-				_cams.get("ort")->setPosition(avt::Vector3(0, 5.f, 10.f));
-				_cams.get("per")->setPosition(avt::Vector3(0, 5.f, 10.f));
-				_cams.get("ort")->lookAt(campfire.getPosition());
-				_cams.get("per")->lookAt(campfire.getPosition());
+				_cams.get("per")->setPosition(avt::Vector3(5.f, 5.f, 5.f));
+				_cams.get("per")->lookAt({});
 			}
 			break;
 		}
@@ -539,35 +210,9 @@ public:
 
 	void mouseButtonCallback(GLFWwindow* win, int button, int action, int mods) override {
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			double cursorX, cursorY;
-			glfwGetCursorPos(win, &cursorX, &cursorY);
-
-			int winx, winy;
-			glfwGetWindowSize(win, &winx, &winy);
-			int x = static_cast<int>(cursorX);
-			int y = winy - static_cast<int>(cursorY);
-
 			auto target = avt::StencilPicker::getLastPick();
 			if (target.second == "fire") {
-				_fireOn = !_fireOn;
 				_fireEmitter->toggle();
-			}else if (target.second == "tent") {
-				_day = !_day;
-				_dayTransition = true;
-			}else if (target.second == "apple1") {
-				_apples.at(0)->setAnimating();
-			}else if (target.second == "apple2") {
-				_apples.at(1)->setAnimating();
-			}else if (target.second == "apple3") {
-				_apples.at(2)->setAnimating();
-			}else if (target.second == "apple4") {
-				_apples.at(3)->setAnimating();
-			}
-			else if (target.second == "bunny") {
-				_bunny.at(0)->setAnimating();
-				_bunny.at(1)->setAnimating();
-				_bunny.at(2)->setAnimating();
-				_bunny.at(3)->setAnimating();
 			}
 
 		}
