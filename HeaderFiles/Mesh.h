@@ -7,17 +7,13 @@
 #include <vector>
 
 #include <GL/glew.h>
-//#include <GLFW/glfw3.h>
 
 #include "avt_math.h"
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-//#include "UniformBuffer.h"
-//#include "Shader.h"
-//#include "Renderer.h"
-#include "Camera.h"
+#include "SceneNode.h"
 
 #include "Texture.h"
 
@@ -30,11 +26,13 @@ namespace avt {
 		Vector3 color;
 	};
 
-	class Mesh {
+	class Mesh : public SceneNode {
 	private:
 
 		VertexBuffer _vb;
 		VertexArray _va;
+
+		int _vertexNum = 0;
 
 		Texture* _texture = nullptr;
 
@@ -48,6 +46,10 @@ namespace avt {
 
 		Mesh(const std::string& filename, const Vector3& baseColor = Vector3(1.f, 1.f, 1.f)) {
 			addOBJ(filename, baseColor);
+		}
+
+		void accept(Renderer* renderer, const Mat4& worldMatrix) override {
+			renderer->drawMesh(this, worldMatrix);
 		}
 
 		void addOBJ(const std::string& filename, const Vector3& baseColor = Vector3(1.f, 1.f, 1.f)) {
@@ -86,6 +88,10 @@ namespace avt {
 
 		const VertexBuffer& vb() const {
 			return _vb;
+		}
+
+		int vertexCount() const {
+			return _vertexNum;
 		}
 
 		// produces sharp meshes

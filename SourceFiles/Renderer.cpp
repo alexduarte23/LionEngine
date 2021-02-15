@@ -1,12 +1,22 @@
 #include "../HeaderFiles/Renderer.h"
 
-#include "../HeaderFiles/Mat4.h"
+#include <GL/glew.h>
+
+#include "../HeaderFiles/avt_math.h"
 #include "../HeaderFiles/Mesh.h"
 #include "../HeaderFiles/StencilPicker.h"
 
+#include "../HeaderFiles/UniformBuffer.h"
+#include "../HeaderFiles/VertexArray.h"
+#include "../HeaderFiles/Shader.h"
+#include "../HeaderFiles/Camera.h"
+
+#include "../HeaderFiles/Scene.h"
+#include "../HeaderFiles/SceneNode.h"
+
 namespace avt {
 
-	void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, UniformBuffer& ub, Shader& shader, Camera* camera) const {
+	/*void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, UniformBuffer& ub, Shader& shader, Camera* camera) {
 		va.bind();
 		ib.bind();
 		ub.bind();
@@ -21,95 +31,59 @@ namespace avt {
 		va.unbind();
 		ib.unbind();
 		ub.unbind();
+	}*/
+
+	void Renderer::draw(const Scene& scene, Camera* camera) {
+		if (_autoClear) clear();
+
+		auto ub = camera->getUBO();
+		ub->bind();
+		ub->fill({ camera->viewMatrix(), camera->projMatrix() });
+
+		scene.getRoot()->accept(this, Mat4::identity());
+
+		ub->unbind();
 	}
 
-	void Renderer::draw(SceneNode* node, UniformBuffer& ub, Shader& shader, Camera* camera) {
-		shader.bind();
-		ub.bind();
-
-		ub.fill({ camera->viewMatrix(), camera->projMatrix() });
-		drawNode(node, shader, Mat4::identity());
-
-		ub.unbind();ub.bind();
-		shader.unbind();
-	}
-
-	void Renderer::draw(const Scene& scene, UniformBuffer& ub, Shader& shader, Camera* camera) {
-		shader.bind();
-		ub.bind();
-
-		ub.fill({ camera->viewMatrix(), camera->projMatrix() });
-		drawNode(scene.getRoot(), shader, Mat4::identity());
-
-		ub.unbind();
-		shader.unbind();
-	}
-
-	void Renderer::draw(const Scene& scene, UniformBuffer& ub, Shader& shader, Camera* camera, Light* light) {
-		shader.bind();
-		ub.bind();
-
-		shader.uploadUniformVec3("LightPosition", light->getPosition());
-		shader.uploadUniformVec3("LightColor", light->getColor());
-		ub.fill({ camera->viewMatrix(), camera->projMatrix() });
-		drawNode(scene.getRoot(), shader, Mat4::identity());
-
-		ub.unbind();
-		shader.unbind();
-	}
-
-	void Renderer::draw(const Scene& scene, Shader& shader) {
-		shader.bind();
-
-		drawNode(scene.getRoot(), shader, Mat4::identity());
-
-		shader.unbind();
-	}
-
-
-	void Renderer::drawNode(SceneNode* node, Shader& shader, const Mat4& worldMatrix) {
+	void Renderer::drawNode(SceneNode* node, const Mat4& worldMatrix) {
 		auto newWorldMat = worldMatrix * node->getTransform();
 
-		//enableStencilBuffer(node); //mouse picking
-		
-		if (node->getMesh()) {
-			Mesh* mesh = node->getMesh();
-
-			mesh->va().bind();
-
-			StencilPicker::prepareStencil(node->getStencilIndex());
-			
-			node->beforeDraw();
-			shader.uploadUniformMat4(MODEL_MATRIX, newWorldMat);
-			glDrawArrays(GL_TRIANGLES, 0, mesh->vb().size());
-			//glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh->getVertices().size());
-			//glDrawElements(GL_TRIANGLES, mesh->ib().count(), GL_UNSIGNED_BYTE, (GLvoid*)0);
-			node->afterDraw();
-
-			mesh->va().unbind();
+		for (auto childNode : *node) {
+			childNode->beforeDraw();
+			childNode->accept(this, newWorldMat);
+			childNode->afterDraw();
 		}
+	}
 
-		for (auto childNode : node->children()) {
-			drawNode(childNode, shader, newWorldMat);
+	void Renderer::drawMesh(Mesh* mesh, const Mat4& worldMatrix) {
+		mesh->beforeDraw();
+
+		auto newWorldMat = worldMatrix * mesh->getTransform();
+		auto& va = mesh->va();
+		auto shader = mesh->getShader();
+
+		va.bind();
+		shader->bind();
+		shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
+
+		glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount());
+
+		shader->unbind();
+		va.unbind();
+
+		mesh->afterDraw();
+
+		for (auto childNode : *mesh) {
+			childNode->beforeDraw();
+			childNode->accept(this, newWorldMat);
+			childNode->afterDraw();
 		}
-
-		//disableStencilBuffer(); //mouse picking
 	}
 
-	void Renderer::disableStencilBuffer() //mouse picking
-	{
-		//glDisable(GL_STENCIL_TEST);
-	}
-
-	void Renderer::enableStencilBuffer(avt::SceneNode* node) //mouse picking
-	{
-		glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_ALWAYS, node->getStencilIndex(), 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	}
 
 	void Renderer::clear() const {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		if (_clearStencil) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		else glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 }

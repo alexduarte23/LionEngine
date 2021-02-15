@@ -3,18 +3,13 @@
 #include <vector>
 #include "avt_math.h"
 #include "SceneNodeCallback.h"
-//#include "Light.h"
-
-//#include "Mesh.h"
+#include "Renderer.h"
 
 namespace avt {
-	class Mesh;
 	class Shader;
-	class Light;
 
 	class SceneNode {
 	private:
-		Mesh* _mesh;
 		SceneNode* _parent;
 		std::vector<SceneNode*> _nodes;
 
@@ -30,10 +25,16 @@ namespace avt {
 		//mouse picking
 		unsigned int _stencilIndex = 0; //0 = not selectable
 
+	public:
+
+		std::vector<SceneNode*>::iterator begin() { return _nodes.begin(); }
+		std::vector<SceneNode*>::iterator end() { return _nodes.end(); }
+		std::vector<SceneNode*>::const_iterator begin() const { return _nodes.begin(); }
+		std::vector<SceneNode*>::const_iterator end() const { return _nodes.end(); }
 
 	public:
-		SceneNode(Mesh* mesh = nullptr)
-			: _callback(nullptr), _parent(nullptr), _mesh(mesh), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0) , /*_transform(Mat4::identity()),*/
+		SceneNode()
+			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0) , /*_transform(Mat4::identity()),*/
 			_shader(nullptr) {}
 
 		virtual ~SceneNode() {
@@ -42,8 +43,12 @@ namespace avt {
 			}
 		}
 
-		SceneNode* createNode(Mesh* mesh = nullptr) {
-			SceneNode* node = new SceneNode(mesh);
+		virtual void accept(Renderer* renderer, const Mat4& worldMatrix) {
+			renderer->drawNode(this, worldMatrix);
+		}
+
+		SceneNode* createNode() {
+			SceneNode* node = new SceneNode();
 			_nodes.push_back(node);
 			node->setParent(this);
 			return node;
@@ -82,14 +87,6 @@ namespace avt {
 			_nodes.clear();
 		}
 
-		void setMesh(Mesh* mesh) {
-			_mesh = mesh;
-		}
-
-		Mesh* getMesh() {
-			return _mesh;
-		}
-
 		const std::vector<SceneNode*>& children() const {
 			return _nodes;
 		}
@@ -101,12 +98,6 @@ namespace avt {
 		Shader* getShader() {
 			return _shader;
 		}
-
-		virtual void draw(const Mat4& worldMatrix) {
-			if (_shader) draw(_shader, worldMatrix);
-		}
-
-		virtual void draw(Shader* shader, const Mat4& worldMatrix);
 
 
 		/*void setTransform(const Mat4& transform) {

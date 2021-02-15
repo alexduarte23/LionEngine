@@ -23,6 +23,7 @@ namespace avt {
 
 		Mat4 _viewM, _projM;
 
+		UniformBuffer* _cameraUBO = nullptr;
 
 		void updateView();
 
@@ -80,6 +81,14 @@ namespace avt {
 		void processMove(const Vector3& movement, float dt);
 
 		void processOrbit(const Vector2& offset, float dt, bool invert=false);
+
+		void linkUBO(UniformBuffer* ubo) {
+			_cameraUBO = ubo;
+		}
+
+		UniformBuffer* getUBO() const {
+			return _cameraUBO;
+		}
 
 	};
 

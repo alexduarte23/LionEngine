@@ -17,8 +17,6 @@
 #include "Renderer.h"
 #include "avt_math.h"
 #include "ErrorManager.h"
-#include "Light.h"
-#include "Bloom.h"
 #include "Texture.h"
 #include "PerspectiveCamera.h"
 #include "OrthographicCamera.h"
@@ -30,19 +28,8 @@
 #include "Manager.h"
 
 #include "Mesh.h"
-#include "Cube.h"
 
-#include "ParticleEmitter.h"
 #include "StencilPicker.h"
-
-#include "CloudSystem.h"
-#include "TerrainPlane.h"
-#include "PointLight.h"
-#include "DirectionalLight.h"
-#include "Shadow.h"
-
-#include "HUDElement.h"
-#include "Background.h"
 
 
 #define ERROR_CALLBACK

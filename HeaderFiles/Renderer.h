@@ -1,38 +1,42 @@
 #pragma once
 
 
-#include <GL/glew.h>
-#include "IndexBuffer.h"
-#include "UniformBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Light.h"
-
-#include "Scene.h"
-#include "SceneNode.h"
-
 namespace avt {
+
+	class Shader;
+	class Camera;
+	class Scene;
+	class Mesh;
+	class SceneNode;
+	class Mat4;
 
 	class Renderer {
 	private:
-		void drawNode(SceneNode* node, Shader& shader, const Mat4& worldMatrix);
+
+		bool _autoClear = true;
+		bool _clearStencil = true;
+
 
 	public:
 		//Renderer (const void* data, GLuint count);
 		Renderer() {}
 		~Renderer() {}
 
-		void draw(const VertexArray& va, const IndexBuffer& ib, UniformBuffer& ub, Shader& shader, Camera* camera) const;
+		//void draw(const VertexArray& va, const IndexBuffer& ib, UniformBuffer& ub, Shader& shader, Camera* camera);
+		void draw(const Scene& scene, Camera* camera);
 
-		void draw(const Scene& scene, UniformBuffer& ub, Shader& shader, Camera* camera);
-		void draw(SceneNode* node, UniformBuffer& ub, Shader& shader, Camera* camera);
-		void draw(const Scene& scene, UniformBuffer& ub, Shader& shader, Camera* camera, Light* light);
-		void draw(const Scene& scene, Shader& shader);
-		void disableStencilBuffer(); 
-		void enableStencilBuffer(avt::SceneNode* node);
+		void drawNode(SceneNode* node, const Mat4& worldMatrix);
+		void drawMesh(Mesh* mesh, const Mat4& worldMatrix);
 
 		void clear() const;
+
+		void autoClear(bool clear = true) {
+			_autoClear = clear;
+		}
+
+		void setStencilClear(bool clear = true) {
+			_clearStencil = clear;
+		}
 	};
 
 }

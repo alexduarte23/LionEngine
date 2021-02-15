@@ -39,7 +39,7 @@ namespace avt {
 		setupOpenGL();
 #ifdef ERROR_CALLBACK
 		_errorManager = ErrorManager(true);
-		//_errorManager.setupErrorCallback();
+		_errorManager.setupErrorCallback();
 #else
 		_errorManager = ErrorManager(false);
 #endif
@@ -102,7 +102,7 @@ namespace avt {
 #if _DEBUG
 		checkOpenGLInfo();
 #endif
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glDepthMask(GL_TRUE);
@@ -153,7 +153,6 @@ namespace avt {
 			_app->pollEventsCallback(_win, lastCursor, {(float)xcursor, (float)ycursor}, elapsed_time);
 			lastCursor.x = (float)xcursor;
 			lastCursor.y = (float)ycursor;
-
 			_app->updateCallback(_win, elapsed_time);
 			_app->displayCallback(_win, elapsed_time);
 

@@ -1,5 +1,4 @@
 #include "../HeaderFiles/Mesh.h"
-#include "../HeaderFiles//Globals.h"
 
 #include <set>
 
@@ -18,6 +17,7 @@ namespace avt {
 
 	void Mesh::setup() {
 		_vb.create(_meshData.data(), _meshData.size() * sizeof(Vertex));
+		_vertexNum = static_cast<int>(_meshData.size());
 
 		VertexBufferLayout layout({
 			{ShaderDataType::VEC3, "position"},
@@ -36,6 +36,8 @@ namespace avt {
 	void Mesh::updateBufferData() {
 		_vb.fill(_meshData.data(), _meshData.size() * sizeof(Vertex));
 		_vb.unbind();
+
+		_vertexNum = static_cast<int>(_meshData.size());
 	}
 
 	void Mesh::addFace(const Vertex& v1, const Vertex& v2, const Vertex& v3, bool computeFaceNormal) {

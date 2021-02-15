@@ -6,15 +6,15 @@ namespace avt {
 
 	class Scene {
 	private:
-		SceneNode* _root;
+		SceneNode*_root;
 	public:
 		Scene() : _root(new SceneNode()) {}
 		~Scene() {
 			delete _root;
 		}
 
-		SceneNode* createNode(Mesh* mesh = nullptr) {
-			return _root->createNode(mesh);
+		SceneNode* createNode() {
+			return _root->createNode();
 		}
 
 		SceneNode* getRoot() const {
@@ -33,14 +33,6 @@ namespace avt {
 			return _root->getShader();
 		}
 
-		void draw(UniformBuffer& ub, Camera* camera) {
-			ub.bind();
-
-			ub.fill({ camera->viewMatrix(), camera->projMatrix() });
-			_root->draw(Mat4::identity());
-
-			ub.unbind();
-		}
 	};
 
 }
