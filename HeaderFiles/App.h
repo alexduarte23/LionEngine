@@ -4,6 +4,7 @@
 
 namespace avt {
 	struct Vector2;
+	class Input;
 
 	class App {
 	public:
@@ -11,9 +12,9 @@ namespace avt {
 		virtual ~App () {}
 
 		virtual void initCallback(GLFWwindow* win) {}
-		virtual void displayCallback(GLFWwindow* win, double dt) {}
-		virtual void updateCallback(GLFWwindow* win, double dt) {}
-		virtual void pollEventsCallback(GLFWwindow* win, const Vector2& lastCursor, const Vector2& newCursor, double dt) {}
+		virtual void displayCallback(GLFWwindow* win, float dt) {}
+		virtual void updateCallback(GLFWwindow* win, float dt) {}
+		virtual void pollEventsCallback(GLFWwindow* win, const Input& input, float dt) {}
 		virtual void windowResizeCallback(GLFWwindow* win, int w, int h) {}
 		virtual void windowCloseCallback(GLFWwindow* win) {}
 		virtual void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods) {}

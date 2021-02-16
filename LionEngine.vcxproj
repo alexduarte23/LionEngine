@@ -152,6 +152,7 @@
     <ClInclude Include="HeaderFiles\Engine.h" />
     <ClInclude Include="HeaderFiles\ErrorManager.h" />
     <ClInclude Include="HeaderFiles\IndexBuffer.h" />
+    <ClInclude Include="HeaderFiles\Input.h" />
     <ClInclude Include="HeaderFiles\Manager.h" />
     <ClInclude Include="HeaderFiles\Mat2.h" />
     <ClInclude Include="HeaderFiles\Mat3.h" />

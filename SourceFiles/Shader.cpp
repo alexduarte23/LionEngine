@@ -3,7 +3,7 @@
 
 namespace avt {
 
-	void Shader::parseShader(const std::string& filename, GLchar** output) {
+	GLchar* Shader::parseShader(const std::string& filename) {
 		std::ifstream fileStream(filename);
 		std::string shader;
 		std::string line;
@@ -12,18 +12,21 @@ namespace avt {
 			shader.append(line + '\n');
 		}
 		if (fileStream.eof()) {
-			*output = new GLchar[shader.length() + 1];
-			strcpy_s(*output, shader.length() + 1, shader.c_str());
+			auto output = new GLchar[shader.length() + 1];
+			strcpy_s(output, shader.length() + 1, shader.c_str());
+			return output;
 		}
 		else {
 			std::cout << "Error reading file " << filename << std::endl;
+			return nullptr;
 		}
 
 	}
 
-	unsigned int Shader::compileShader(GLenum shader_type, const std::string& filename) {
-		GLchar* shaderChar;
-		parseShader(filename, &shaderChar);
+	unsigned int Shader::compileShader(GLenum shader_type, const std::string& source, bool external) {
+		const GLchar* shaderChar;
+		if (external) shaderChar = parseShader(source);
+		else shaderChar = source.c_str();
 
 		unsigned int shaderId = glCreateShader(shader_type);
 		glShaderSource(shaderId, 1, &shaderChar, 0);
@@ -44,8 +47,8 @@ namespace avt {
 			glUseProgram(0);
 		}
 		std::vector<GLuint> shaderIDs;
-		shaderIDs.push_back(compileShader(GL_VERTEX_SHADER, params._vertexShader));
-		shaderIDs.push_back(compileShader(GL_FRAGMENT_SHADER, params._fragmentShader));
+		shaderIDs.push_back(compileShader(GL_VERTEX_SHADER, params._vertexShader, params._externalSource));
+		shaderIDs.push_back(compileShader(GL_FRAGMENT_SHADER, params._fragmentShader, params._externalSource));
 
 		_program = glCreateProgram();
 

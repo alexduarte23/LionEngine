@@ -20,16 +20,12 @@
 #include "Texture.h"
 #include "PerspectiveCamera.h"
 #include "OrthographicCamera.h"
-
 #include "Scene.h"
 #include "SceneNode.h"
-
-
 #include "Manager.h"
-
 #include "Mesh.h"
-
 #include "StencilPicker.h"
+#include "Input.h"
 
 
 #define ERROR_CALLBACK
@@ -41,6 +37,8 @@ namespace avt {
 		GLFWwindow* _win = nullptr;
 
 		avt::ErrorManager _errorManager;
+
+		Input _input;
 
 		App* _app = nullptr;
 

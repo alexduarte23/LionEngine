@@ -35,8 +35,14 @@ namespace avt {
 		std::map<std::string, GLuint> _textures;
 		std::string _vertexShader;
 		std::string _fragmentShader;
+		bool _externalSource = true;
 
 	public:
+
+		ShaderParams& externalSource(bool external = true) {
+			_externalSource = external;
+			return *this;
+		}
 
 		ShaderParams& addInput(std::string attrib, GLuint location) {
 			_inputs.insert({ attrib, location });
@@ -143,8 +149,8 @@ namespace avt {
 
 		std::map<std::string, GLint> _uniforms;
 
-		void parseShader(const std::string& filename, GLchar** output);
-		unsigned int compileShader(GLenum shader_type, const std::string& filename);
+		GLchar* parseShader(const std::string& filename);
+		unsigned int compileShader(GLenum shader_type, const std::string& source, bool external);
 
 	public:
 		Shader() : _program(0) {}
