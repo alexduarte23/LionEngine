@@ -36,7 +36,7 @@ namespace avt {
 	void Renderer::draw(const Scene& scene, Camera* camera) {
 		if (_autoClear) clear();
 
-		auto ub = camera->getUBO();
+		auto& ub = camera->getUBO();
 		ub->bind();
 		ub->fill({ camera->viewMatrix(), camera->projMatrix() });
 
@@ -60,16 +60,16 @@ namespace avt {
 
 		auto newWorldMat = worldMatrix * mesh->getTransform();
 		auto& va = mesh->va();
-		auto shader = mesh->getShader();
+		auto& shader = mesh->getShader();
 
-		va.bind();
+		va->bind();
 		shader->bind();
 		shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
 
 		glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount());
 
 		shader->unbind();
-		va.unbind();
+		va->unbind();
 
 		mesh->afterDraw();
 

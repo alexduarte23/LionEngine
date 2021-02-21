@@ -15,8 +15,6 @@ namespace avt {
 
 		//Mat4 _transform;
 
-		Shader* _shader;
-
 		Vector3 _translation, _scale;
 		Quaternion _rot;
 
@@ -34,8 +32,7 @@ namespace avt {
 
 	public:
 		SceneNode()
-			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0) , /*_transform(Mat4::identity()),*/
-			_shader(nullptr) {}
+			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0)/*, _transform(Mat4::identity())*/ {}
 
 		virtual ~SceneNode() {
 			for (auto node : _nodes) {
@@ -89,14 +86,6 @@ namespace avt {
 
 		const std::vector<SceneNode*>& children() const {
 			return _nodes;
-		}
-
-		void setShader(Shader* shader) {
-			_shader = shader;
-		}
-
-		Shader* getShader() {
-			return _shader;
 		}
 
 

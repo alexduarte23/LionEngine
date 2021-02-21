@@ -5,8 +5,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <GL/glew.h>
+#include <memory>
 
 #include "avt_math.h"
 
@@ -14,7 +16,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "SceneNode.h"
-
+#include "Shader.h"
 #include "Texture.h"
 
 namespace avt {
@@ -29,18 +31,15 @@ namespace avt {
 	class Mesh : public SceneNode {
 	private:
 
-		VertexBuffer _vb;
-		VertexArray _va;
+		std::vector<Vertex> _meshData;
+		std::shared_ptr<VertexBuffer> _vb;
+		std::shared_ptr<VertexArray> _va;
+		std::shared_ptr<Shader> _shader;
+		Texture* _texture = nullptr;
 
 		int _vertexNum = 0;
 
-		Texture* _texture = nullptr;
-
-	protected:
-
-
 	public:
-		std::vector<Vertex> _meshData;
 
 		Mesh() {}
 
@@ -82,16 +81,24 @@ namespace avt {
 		void applyTransform(Mat4 mat);
 
 
-		const VertexArray& va() const {
+		const std::shared_ptr<VertexArray>& va() const {
 			return _va;
 		}
 
-		const VertexBuffer& vb() const {
+		const std::shared_ptr<VertexBuffer>& vb() const {
 			return _vb;
 		}
 
 		int vertexCount() const {
 			return _vertexNum;
+		}
+
+		void setShader(const std::shared_ptr<Shader>& shader) {
+			_shader = shader;
+		}
+
+		const std::shared_ptr<Shader>& getShader() {
+			return _shader;
 		}
 
 		// produces sharp meshes

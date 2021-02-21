@@ -4,14 +4,7 @@
 
 namespace avt {
 
-	std::unique_ptr<Texture> Texture::_default(nullptr);
-
-	void Texture::create(const std::string& filename, const TextureParams& params) {
-		if (_texID) {
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDeleteTextures(1, &_texID);
-		}
-
+	Texture::Texture(const std::string& filename, const TextureParams& params) {
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(filename.data(), &_width, &_height, &_nrChannels, 0);
 		if (!data) {
@@ -38,12 +31,7 @@ namespace avt {
 #endif
 	}
 
-	void Texture::create(int width, int height, const TextureParams& params) {
-		if (_texID) {
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDeleteTextures(1, &_texID);
-		}
-
+	Texture::Texture(int width, int height, const TextureParams& params) {
 		_width = width;
 		_height = height;
 		_nrChannels = 4;
@@ -67,8 +55,6 @@ namespace avt {
 	}
 
 	void Texture::clear() {
-		if (!_texID) return;
-
 		std::vector<unsigned char> fill((size_t)_width * _height * _nrChannels, 0);
 		glBindTexture(GL_TEXTURE_2D, _texID);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, _nrChannels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, fill.data());
@@ -76,8 +62,6 @@ namespace avt {
 
 	void Texture::mixImage(const std::string& filename, const Vector2& start) {
 		int w, h, channels;
-
-		if (!_texID) return;
 
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(filename.data(), &w, &h, &channels, _nrChannels);
@@ -105,8 +89,6 @@ namespace avt {
 	}
 
 	void Texture::replaceImage(const std::string& filename) {
-		if (!_texID) return;
-
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(filename.data(), &_width, &_height, &_nrChannels, 0);
 		if (!data) {

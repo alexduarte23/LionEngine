@@ -78,7 +78,6 @@ namespace avt {
 		GLsizei _stride;
 	public:
 		VertexBufferLayout() : _stride(0) {}
-		~VertexBufferLayout() {}
 
 		VertexBufferLayout(std::initializer_list<LayoutElement> elements) : _elements(elements), _stride(0) {
 			GLuint offset = 0;
@@ -88,6 +87,8 @@ namespace avt {
 			}
 			_stride = offset;
 		}
+
+		~VertexBufferLayout() {}
 
 		void add(const LayoutElement& el) {
 			_elements.push_back(el);

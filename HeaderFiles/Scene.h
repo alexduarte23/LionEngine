@@ -25,14 +25,6 @@ namespace avt {
 			return _root->addNode(node);
 		}
 
-		void setShader(Shader* shader) {
-			_root->setShader(shader);
-		}
-
-		Shader* getShader() {
-			return _root->getShader();
-		}
-
 	};
 
 }

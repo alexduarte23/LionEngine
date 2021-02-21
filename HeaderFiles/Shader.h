@@ -153,15 +153,12 @@ namespace avt {
 		unsigned int compileShader(GLenum shader_type, const std::string& source, bool external);
 
 	public:
-		Shader() : _program(0) {}
-		~Shader() {
-			if (_program) {
-				glDeleteProgram(_program);
-				glUseProgram(0);
-			}
-		}
+		Shader(const ShaderParams& params);
 
-		void create(const ShaderParams& params);
+		~Shader() {
+			glDeleteProgram(_program);
+			glUseProgram(0);
+		}
 
 		void bind() {
 			glUseProgram(_program);

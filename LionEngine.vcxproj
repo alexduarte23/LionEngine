@@ -151,6 +151,7 @@
     <ClInclude Include="HeaderFiles\Camera.h" />
     <ClInclude Include="HeaderFiles\Engine.h" />
     <ClInclude Include="HeaderFiles\ErrorManager.h" />
+    <ClInclude Include="HeaderFiles\Geometry.h" />
     <ClInclude Include="HeaderFiles\IndexBuffer.h" />
     <ClInclude Include="HeaderFiles\Input.h" />
     <ClInclude Include="HeaderFiles\Manager.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="HeaderFiles\Mat4.h" />
     <ClInclude Include="HeaderFiles\Matrix.h" />
     <ClInclude Include="HeaderFiles\Mesh.h" />
+    <ClInclude Include="HeaderFiles\OBJLoader.h" />
     <ClInclude Include="HeaderFiles\OrthographicCamera.h" />
     <ClInclude Include="HeaderFiles\Perlin.h" />
     <ClInclude Include="HeaderFiles\PerspectiveCamera.h" />
@@ -183,7 +185,7 @@
     <ClCompile Include="SourceFiles\Camera.cpp" />
     <ClCompile Include="SourceFiles\Engine.cpp" />
     <ClCompile Include="SourceFiles\ErrorManager.cpp" />
-    <ClCompile Include="SourceFiles\IndexBuffer.cpp" />
+    <ClCompile Include="SourceFiles\Input.cpp" />
     <ClCompile Include="SourceFiles\main.cpp" />
     <ClCompile Include="SourceFiles\Mat2.cpp" />
     <ClCompile Include="SourceFiles\Mat3.cpp" />
@@ -196,12 +198,10 @@
     <ClCompile Include="SourceFiles\Shader.cpp" />
     <ClCompile Include="SourceFiles\StencilPicker.cpp" />
     <ClCompile Include="SourceFiles\Texture.cpp" />
-    <ClCompile Include="SourceFiles\UniformBuffer.cpp" />
     <ClCompile Include="SourceFiles\Vector2.cpp" />
     <ClCompile Include="SourceFiles\Vector3.cpp" />
     <ClCompile Include="SourceFiles\Vector4.cpp" />
     <ClCompile Include="SourceFiles\VertexArray.cpp" />
-    <ClCompile Include="SourceFiles\VertexBuffer.cpp" />
     <ClCompile Include="SourceFiles\VertexBufferLayout.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

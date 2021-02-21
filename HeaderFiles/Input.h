@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <unordered_map>
@@ -163,59 +164,61 @@ namespace avt {
 
 	class Input {
 	private:
-		GLFWwindow* _win = nullptr;
-		Vector2 _scrollOffset;
-		Vector2 _mouseOffset;
+		static GLFWwindow* _win;
+		static Vector2 _scrollOffset;
+		static Vector2 _mouseOffset;
 	
-		std::unordered_map<KeyCode, int> _keyStates;
-		std::unordered_map<MouseCode, int> _mouseStates;
+		static std::unordered_map<KeyCode, int> _keyStates;
+		static std::unordered_map<MouseCode, int> _mouseStates;
 
 		friend class Engine;
 
+		//void setWindow(GLFWwindow* win);
+
 	public:
-		Input() {}
+		Input() = delete;
 		~Input() {}
 
-		Input(const Input& input) = delete;
-		Input(Input&& input) = delete;
-		Input& operator=(const Input& input) = delete;
-		Input& operator=(Input&& input) = delete;
+		//Input(const Input& input) = delete;
+		//Input(Input&& input) = delete;
+		//Input& operator=(const Input& input) = delete;
+		//Input& operator=(Input&& input) = delete;
 
-		bool keyPressed(KeyCode key) const {
+		static bool keyPressed(KeyCode key) {
 			auto state = _keyStates.find(key);
 			if (state == _keyStates.end()) return false;
 			else return state->second == GLFW_PRESS;
 		}
 
-		bool keyDown(KeyCode key) const {
+		static bool keyDown(KeyCode key) {
 			if (!_win) return false;
 			return glfwGetKey(_win, static_cast<std::underlying_type<KeyCode>::type>(key)) == GLFW_PRESS;
 		}
 
-		bool keyReleased(KeyCode key) const {
+		static bool keyReleased(KeyCode key) {
 			auto state = _keyStates.find(key);
 			if (state == _keyStates.end()) return false;
 			else return state->second == GLFW_RELEASE;
 		}
 
-		bool mouseBtnPressed(MouseCode btn) const {
+		static bool mouseBtnPressed(MouseCode btn) {
 			auto state = _mouseStates.find(btn);
 			if (state == _mouseStates.end()) return false;
 			else return state->second == GLFW_PRESS;
 		}
 
-		bool mouseBtnDown(MouseCode btn) const {
+		static bool mouseBtnDown(MouseCode btn) {
 			if (!_win) return false;
 			return glfwGetMouseButton(_win, static_cast<std::underlying_type<MouseCode>::type>(btn)) == GLFW_PRESS;
 		}
 
-		bool mouseBtnReleased(MouseCode btn) const {
+		static bool mouseBtnReleased(MouseCode btn) {
 			auto state = _mouseStates.find(btn);
 			if (state == _mouseStates.end()) return false;
 			else return state->second == GLFW_RELEASE;
 		}
 
-		Vector2 mousePosition() const {
+		static Vector2 mousePosition() {
 			if (_win) {
 				double xcursor, ycursor;
 				glfwGetCursorPos(_win, &xcursor, &ycursor);
@@ -224,20 +227,20 @@ namespace avt {
 			return {};
 		}
 
-		Vector2 mouseOffset() const {
+		static Vector2 mouseOffset() {
 			return _mouseOffset;
 		}
 
 		// TODO
-		Vector2 scroll() const {
+		static Vector2 scroll() {
 			return _scrollOffset;
 		}
 
-		float scrollY() const {
+		static float scrollY() {
 			return _scrollOffset.y;
 		}
 
-		float scrollX() const {
+		static float scrollX() {
 			return _scrollOffset.x;
 		}
 

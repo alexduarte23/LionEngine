@@ -24,14 +24,14 @@ namespace avt {
 		Engine* engine = (Engine*)glfwGetWindowUserPointer(win);
 		engine->app()->keyCallback(win, key, scancode, action, mods);
 		if (action == GLFW_PRESS || action == GLFW_RELEASE)
-			engine->_input._keyStates[static_cast<KeyCode>(key)] = action;
+			Input::_keyStates[static_cast<KeyCode>(key)] = action;
 	}
 
 	void Engine::window_mouse_button_callback(GLFWwindow* win, int button, int action, int mods) {
 		Engine* engine = (Engine*)glfwGetWindowUserPointer(win);
 		engine->app()->mouseButtonCallback(win, button, action, mods);
 		if (action == GLFW_PRESS || action == GLFW_RELEASE)
-			engine->_input._mouseStates[static_cast<MouseCode>(button)] = action;
+			Input::_mouseStates[static_cast<MouseCode>(button)] = action;
 	}
 
 
@@ -47,7 +47,7 @@ namespace avt {
 #else
 		_errorManager = ErrorManager(false);
 #endif
-		if(_app) _app->initCallback(_win);
+		_app->onInit(_win);
 	}
 
 	void Engine::setupGLFW() {
@@ -87,7 +87,7 @@ namespace avt {
 		glfwMakeContextCurrent(_win);
 		glfwSwapInterval(_vsync);
 		
-		_input._win = _win;
+		Input::_win = _win;
 	}
 
 
@@ -156,15 +156,15 @@ namespace avt {
 
 			glfwPollEvents();
 			glfwGetCursorPos(_win, &xcursor, &ycursor);
-			_input._mouseOffset = Vector2((float)xcursor, (float)ycursor) - lastCursor;
-			_app->pollEventsCallback(_win, _input, (float)elapsed_time);
-			_input._keyStates.clear();
-			_input._mouseStates.clear();
+			Input::_mouseOffset = Vector2((float)xcursor, (float)ycursor) - lastCursor;
+
+			_app->onUpdate(_win, (float)elapsed_time);
+			Input::_keyStates.clear();
+			Input::_mouseStates.clear();
 			lastCursor.x = (float)xcursor;
 			lastCursor.y = (float)ycursor;
 
-			_app->updateCallback(_win, (float)elapsed_time);
-			_app->displayCallback(_win, (float)elapsed_time);
+			_app->onDisplay(_win, (float)elapsed_time);
 
 			glfwSwapBuffers(_win);
 

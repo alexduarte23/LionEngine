@@ -2,8 +2,7 @@
 
 
 namespace avt {
-	const std::string ErrorManager::errorSource(GLenum source)
-	{
+	const std::string ErrorManager::errorSource(GLenum source) {
 		switch (source) {
 		case GL_DEBUG_SOURCE_API:				return "API";
 		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:		return "window system";
@@ -15,8 +14,7 @@ namespace avt {
 		}
 	}
 
-	const std::string ErrorManager::errorType(GLenum type)
-	{
+	const std::string ErrorManager::errorType(GLenum type) {
 		switch (type) {
 		case GL_DEBUG_TYPE_ERROR:				return "error";
 		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:	return "deprecated behavior";
@@ -31,8 +29,7 @@ namespace avt {
 		}
 	}
 
-	const std::string ErrorManager::errorSeverity(GLenum severity)
-	{
+	const std::string ErrorManager::errorSeverity(GLenum severity) {
 		switch (severity) {
 		case GL_DEBUG_SEVERITY_HIGH:			return "high";
 		case GL_DEBUG_SEVERITY_MEDIUM:			return "medium";
@@ -43,8 +40,7 @@ namespace avt {
 	}
 
 	void ErrorManager::error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
-		const GLchar* message, const void* userParam)
-	{
+		const GLchar* message, const void* userParam) {
 		std::cerr << "GL ERROR:" << std::endl;
 		std::cerr << "  source:     " << errorSource(source) << std::endl;
 		std::cerr << "  type:       " << errorType(type) << std::endl;
@@ -54,8 +50,7 @@ namespace avt {
 		std::cin.ignore();
 	}
 
-	void ErrorManager::setupErrorCallback()
-	{
+	void ErrorManager::setupErrorCallback() {
 		if (!_updated)
 			return;
 		glEnable(GL_DEBUG_OUTPUT);
@@ -66,8 +61,7 @@ namespace avt {
 		// params: source, type, severity, count, ids, enabled
 	}
 
-	const std::string ErrorManager::errorString(GLenum error)
-	{
+	const std::string ErrorManager::errorString(GLenum error) {
 		switch (error) {
 		case GL_NO_ERROR:
 			return "No error has been recorded.";
@@ -89,8 +83,7 @@ namespace avt {
 		}
 	}
 
-	bool ErrorManager::isOpenGLError()
-	{
+	bool ErrorManager::isOpenGLError() {
 		bool isError = false;
 		GLenum errCode;
 		while ((errCode = glGetError()) != GL_NO_ERROR) {
@@ -100,11 +93,14 @@ namespace avt {
 		return isError;
 	}
 
-	void ErrorManager::checkOpenGLError(std::string error)
-	{
+	void ErrorManager::checkOpenGLError(std::string error) {
 		if (isOpenGLError()) {
 			std::cerr << error << std::endl;
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	void ErrorManager::clearOpenGLError() {
+		while (glGetError() != GL_NO_ERROR);
 	}
 }

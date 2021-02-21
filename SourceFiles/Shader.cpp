@@ -41,11 +41,7 @@ namespace avt {
 	}
 
 
-	void Shader::create(const ShaderParams& params) {
-		if (_program) {
-			glDeleteProgram(_program);
-			glUseProgram(0);
-		}
+	Shader::Shader(const ShaderParams& params) {
 		std::vector<GLuint> shaderIDs;
 		shaderIDs.push_back(compileShader(GL_VERTEX_SHADER, params._vertexShader, params._externalSource));
 		shaderIDs.push_back(compileShader(GL_FRAGMENT_SHADER, params._fragmentShader, params._externalSource));

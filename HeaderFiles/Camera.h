@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <memory>
 
 #include "avt_math.h"
 #include "UniformBuffer.h"
@@ -23,7 +24,7 @@ namespace avt {
 
 		Mat4 _viewM, _projM;
 
-		UniformBuffer* _cameraUBO = nullptr;
+		std::shared_ptr<UniformBuffer> _cameraUBO;
 
 		void updateView();
 
@@ -82,11 +83,11 @@ namespace avt {
 
 		void processOrbit(const Vector2& offset, float dt, bool invert=false);
 
-		void linkUBO(UniformBuffer* ubo) {
+		void setUBO(const std::shared_ptr<UniformBuffer>& ubo) {
 			_cameraUBO = ubo;
 		}
 
-		UniformBuffer* getUBO() const {
+		const std::shared_ptr<UniformBuffer>& getUBO() const {
 			return _cameraUBO;
 		}
 

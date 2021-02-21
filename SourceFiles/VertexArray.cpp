@@ -4,16 +4,6 @@
 
 namespace avt {
 
-	void VertexArray::create() {
-		glGenVertexArrays(1, &_vaoID);
-		glBindVertexArray(_vaoID);
-		glBindVertexArray(0);
-
-#ifndef ERROR_CALLBACK
-		ErrorManager::checkOpenGLError("ERROR: Could not create Vertex Array.");
-#endif
-	}
-
 	VertexArray::~VertexArray() {
 		glBindVertexArray(_vaoID);
 		for (unsigned int i = 0; i < _attribNum; i++) {
@@ -27,12 +17,11 @@ namespace avt {
 #endif
 	}
 
-	void VertexArray::addVertexBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout, bool instanced) {
-		if (!_vaoID) return;
-
+	void VertexArray::addVertexBuffer(const std::shared_ptr<VertexBuffer>& vb, bool instanced) {
 		glBindVertexArray(_vaoID);
-		vb.bind();
+		vb->bind();
 
+		auto& layout = vb->layout();
 		for (const auto& el : layout) {
 			switch (el.type) {
 			case avt::ShaderDataType::INT:
@@ -63,19 +52,18 @@ namespace avt {
 			}
 		}
 		glBindVertexArray(0);
+		_vbs.push_back(vb);
 
 #ifndef ERROR_CALLBACK
 		ErrorManager::checkOpenGLError("ERROR: Could not add Vertex Buffer to Vertex Array.");
 #endif
 	}
 
-	void VertexArray::setIndexBuffer(const IndexBuffer& ib) {
-		if (!_vaoID) return;
-
+	void VertexArray::setIndexBuffer(const std::shared_ptr<IndexBuffer>& ib) {
 		glBindVertexArray(_vaoID);
-		ib.bind();
+		ib->bind();
 		glBindVertexArray(0);
-		_indexed = true;
+		_ib = ib;
 
 #ifndef ERROR_CALLBACK
 		ErrorManager::checkOpenGLError("ERROR: Could not add Index Buffer to Vertex Array.");

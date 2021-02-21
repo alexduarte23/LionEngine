@@ -65,28 +65,23 @@ namespace avt {
 
 	class Texture {
 	private:
-		static std::unique_ptr<Texture> _default;
+		static std::shared_ptr<Texture> _default;
 
 	protected:
-		GLuint _texID;
+		GLuint _texID = 0;
 
-		int _width, _height, _nrChannels;
+		int _width = 0, _height = 0, _nrChannels = 0;
 		TextureParams _params;
 
 	public:
-		Texture()
-			: _texID(0), _width(0), _height(0), _nrChannels(0) {}
+		Texture(const std::string& filename, const TextureParams& params = TextureParams());
+		Texture(int width, int height, const TextureParams& params = TextureParams());
 
 		~Texture() {
-			if (_texID) {
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glDeleteTextures(1, &_texID);
-			}
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDeleteTextures(1, &_texID);
 		}
 
-		void create(const std::string& filename, const TextureParams& params = TextureParams());
-
-		void create(int width, int height, const TextureParams& params = TextureParams());
 
 		void clear();
 
@@ -104,12 +99,11 @@ namespace avt {
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		static const Texture* getDefault() {
+		static const std::shared_ptr<Texture>& getDefault() {
 			if (!_default.get()) {
-				_default.reset(new Texture());
-				_default->create("Resources/textures/default.png", TextureParams().wrap(GL_REPEAT).filter(GL_NEAREST));
+				_default = std::make_shared<Texture>("Resources/textures/default.png", TextureParams().wrap(GL_REPEAT).filter(GL_NEAREST));
 			}
-			return _default.get();
+			return _default;
 		}
 	};
 

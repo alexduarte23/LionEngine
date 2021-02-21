@@ -16,26 +16,25 @@ namespace avt {
 	}
 
 	void Mesh::setup() {
-		_vb.create(_meshData.data(), _meshData.size() * sizeof(Vertex));
-		_vertexNum = static_cast<int>(_meshData.size());
-
 		VertexBufferLayout layout({
 			{ShaderDataType::VEC3, "position"},
 			{ShaderDataType::VEC2, "texCoord"},
 			{ShaderDataType::VEC3, "normal"},
 			{ShaderDataType::VEC3, "color"}
 		});
+		_vb = std::make_shared<VertexBuffer>(_meshData.data(), _meshData.size() * sizeof(Vertex), layout);
+		_vertexNum = static_cast<int>(_meshData.size());
 
-		_va.create();
-		_va.addVertexBuffer(_vb, layout);
+		_va = std::make_shared<VertexArray>();
+		_va->addVertexBuffer(_vb);
 
-		_va.unbind();
-		_vb.unbind();
+		_va->unbind();
+		_vb->unbind();
 	}
 
 	void Mesh::updateBufferData() {
-		_vb.fill(_meshData.data(), _meshData.size() * sizeof(Vertex));
-		_vb.unbind();
+		_vb->fill(_meshData.data(), _meshData.size() * sizeof(Vertex));
+		_vb->unbind();
 
 		_vertexNum = static_cast<int>(_meshData.size());
 	}

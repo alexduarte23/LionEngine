@@ -38,8 +38,6 @@ namespace avt {
 
 		avt::ErrorManager _errorManager;
 
-		Input _input;
-
 		App* _app = nullptr;
 
 		int _glMajor = 0;

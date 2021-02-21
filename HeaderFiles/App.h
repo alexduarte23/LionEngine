@@ -11,10 +11,10 @@ namespace avt {
 		App() {}
 		virtual ~App () {}
 
-		virtual void initCallback(GLFWwindow* win) {}
-		virtual void displayCallback(GLFWwindow* win, float dt) {}
-		virtual void updateCallback(GLFWwindow* win, float dt) {}
-		virtual void pollEventsCallback(GLFWwindow* win, const Input& input, float dt) {}
+		virtual void onInit(GLFWwindow* win) {}
+		virtual void onDisplay(GLFWwindow* win, float dt) {}
+		virtual void onUpdate(GLFWwindow* win, float dt) {}
+
 		virtual void windowResizeCallback(GLFWwindow* win, int w, int h) {}
 		virtual void windowCloseCallback(GLFWwindow* win) {}
 		virtual void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods) {}
