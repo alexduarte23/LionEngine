@@ -167,10 +167,6 @@ namespace avt {
 			_app->onDisplay(_win, (float)elapsed_time);
 
 			glfwSwapBuffers(_win);
-
-#ifndef ERROR_CALLBACK
-			ErrorManager::checkOpenGLError("ERROR: MAIN/RUN");
-#endif
 		}
 	}
 

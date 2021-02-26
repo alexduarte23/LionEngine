@@ -111,10 +111,10 @@
     <ClInclude Include="HeaderFiles\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderFiles\Geometry.h">
+    <ClInclude Include="HeaderFiles\Renderable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderFiles\OBJLoader.h">
+    <ClInclude Include="HeaderFiles\RenderMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

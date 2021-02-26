@@ -15,8 +15,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-#include "SceneNode.h"
-#include "Shader.h"
 #include "Texture.h"
 
 namespace avt {
@@ -28,15 +26,16 @@ namespace avt {
 		Vector3 color;
 	};
 
-	class Mesh : public SceneNode {
+	class Mesh {
 	private:
 
 		std::vector<Vertex> _meshData;
 		std::shared_ptr<VertexBuffer> _vb;
 		std::shared_ptr<VertexArray> _va;
-		std::shared_ptr<Shader> _shader;
 		Texture* _texture = nullptr;
 
+		bool _dirty = true;
+		bool _autoUpdate = true;
 		int _vertexNum = 0;
 
 	public:
@@ -47,13 +46,10 @@ namespace avt {
 			addOBJ(filename, baseColor);
 		}
 
-		void accept(Renderer* renderer, const Mat4& worldMatrix) override {
-			renderer->drawMesh(this, worldMatrix);
-		}
-
 		void addOBJ(const std::string& filename, const Vector3& baseColor = Vector3(1.f, 1.f, 1.f)) {
 			auto data = loadOBJ(filename, baseColor);
 			_meshData.insert(_meshData.end(), data.begin(), data.end());
+			_dirty = true;
 		}
 
 		void addFace(const Vertex& v1, const Vertex& v2, const Vertex& v3, bool computeFaceNormal = false);
@@ -93,12 +89,12 @@ namespace avt {
 			return _vertexNum;
 		}
 
-		void setShader(const std::shared_ptr<Shader>& shader) {
-			_shader = shader;
+		void setAutoBufferUpdate(bool autoUpdate) {
+			_autoUpdate = autoUpdate;
 		}
 
-		const std::shared_ptr<Shader>& getShader() {
-			return _shader;
+		bool autoBufferUpdate() const {
+			return _autoUpdate;
 		}
 
 		// produces sharp meshes

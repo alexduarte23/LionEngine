@@ -33,8 +33,8 @@ namespace avt {
 
 	void Camera::processOrbit(const Vector2& offset , float dt, bool invert) {
 		int direction = invert ? -1 : 1;
-		float yaw = direction * offset.x * _orbitSpeed * dt;
-		float pitch = direction * offset.y * _orbitSpeed * dt;
+		float yaw = direction * offset.x * _orbitSpeed;
+		float pitch = direction * offset.y * _orbitSpeed;
 
 		float diff = _front.angleTo(_worldUp);
 		if (diff - pitch < _margin)

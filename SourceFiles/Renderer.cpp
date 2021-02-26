@@ -1,6 +1,5 @@
 #include "../HeaderFiles/Renderer.h"
 
-#include <GL/glew.h>
 
 #include "../HeaderFiles/avt_math.h"
 #include "../HeaderFiles/Mesh.h"
@@ -33,6 +32,9 @@ namespace avt {
 		ub.unbind();
 	}*/
 
+
+
+
 	void Renderer::draw(const Scene& scene, Camera* camera) {
 		if (_autoClear) clear();
 
@@ -40,44 +42,40 @@ namespace avt {
 		ub->bind();
 		ub->fill({ camera->viewMatrix(), camera->projMatrix() });
 
-		scene.getRoot()->accept(this, Mat4::identity());
+		drawNode(scene.getRoot(), Mat4::identity());
 
 		ub->unbind();
 	}
 
 	void Renderer::drawNode(SceneNode* node, const Mat4& worldMatrix) {
+		node->beforeDraw();
 		auto newWorldMat = worldMatrix * node->getTransform();
 
+		if (node->getRenderable()) drawRenderable(node->getRenderable(), newWorldMat);
+
 		for (auto childNode : *node) {
-			childNode->beforeDraw();
-			childNode->accept(this, newWorldMat);
-			childNode->afterDraw();
+			drawNode(childNode, newWorldMat);
 		}
+		node->afterDraw();
 	}
 
-	void Renderer::drawMesh(Mesh* mesh, const Mat4& worldMatrix) {
-		mesh->beforeDraw();
+	void Renderer::drawRenderable(Renderable* rend, const Mat4& worldMatrix) {
+		auto& mesh = rend->mesh();
+		auto& shader = rend->shader();
 
-		auto newWorldMat = worldMatrix * mesh->getTransform();
+		if (mesh->autoBufferUpdate()) mesh->updateBufferData();
+		
 		auto& va = mesh->va();
-		auto& shader = mesh->getShader();
+		if (!va || !shader) return;
 
 		va->bind();
 		shader->bind();
-		shader->uploadUniformMat4(MODEL_MATRIX, newWorldMat);
+		shader->uploadUniformMat4(MODEL_MATRIX, worldMatrix);
 
-		glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount());
+		glDrawArrays(getGLdrawMode(rend->drawMode()), 0, mesh->vertexCount());
 
 		shader->unbind();
 		va->unbind();
-
-		mesh->afterDraw();
-
-		for (auto childNode : *mesh) {
-			childNode->beforeDraw();
-			childNode->accept(this, newWorldMat);
-			childNode->afterDraw();
-		}
 	}
 
 

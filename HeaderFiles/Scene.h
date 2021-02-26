@@ -13,8 +13,8 @@ namespace avt {
 			delete _root;
 		}
 
-		SceneNode* createNode() {
-			return _root->createNode();
+		SceneNode* createNode(Renderable* rend = nullptr) {
+			return _root->createNode(rend);
 		}
 
 		SceneNode* getRoot() const {

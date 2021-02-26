@@ -1,17 +1,20 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "avt_math.h"
 #include "SceneNodeCallback.h"
-#include "Renderer.h"
 
 namespace avt {
+	class Renderable;
 	class Shader;
 
 	class SceneNode {
 	private:
 		SceneNode* _parent;
 		std::vector<SceneNode*> _nodes;
+
+		Renderable* _rend;
 
 		//Mat4 _transform;
 
@@ -31,8 +34,8 @@ namespace avt {
 		std::vector<SceneNode*>::const_iterator end() const { return _nodes.end(); }
 
 	public:
-		SceneNode()
-			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0)/*, _transform(Mat4::identity())*/ {}
+		SceneNode(Renderable* rend = nullptr)
+			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0), _rend(rend)/*, _transform(Mat4::identity())*/ {}
 
 		virtual ~SceneNode() {
 			for (auto node : _nodes) {
@@ -40,12 +43,8 @@ namespace avt {
 			}
 		}
 
-		virtual void accept(Renderer* renderer, const Mat4& worldMatrix) {
-			renderer->drawNode(this, worldMatrix);
-		}
-
-		SceneNode* createNode() {
-			SceneNode* node = new SceneNode();
+		SceneNode* createNode(Renderable* rend = nullptr) {
+			SceneNode* node = new SceneNode(rend);
 			_nodes.push_back(node);
 			node->setParent(this);
 			return node;
@@ -86,6 +85,14 @@ namespace avt {
 
 		const std::vector<SceneNode*>& children() const {
 			return _nodes;
+		}
+
+		void setRenderable(Renderable* rend) {
+			_rend = rend;
+		}
+
+		Renderable* getRenderable() {
+			return _rend;
 		}
 
 

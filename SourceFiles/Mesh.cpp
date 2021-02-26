@@ -7,12 +7,14 @@ namespace avt {
 		for (auto& v : _meshData) {
 			v.color = color;
 		}
+		_dirty = true;
 	}
 
 	void Mesh::applyTransform(Mat4 mat) {
 		for (auto& v : _meshData) {
 			v.position = (mat * v.position.to4D()).to3D();
 		}
+		_dirty = true;
 	}
 
 	void Mesh::setup() {
@@ -33,10 +35,18 @@ namespace avt {
 	}
 
 	void Mesh::updateBufferData() {
+		if (!_dirty) return;
+		if (!_va.get()) {
+			setup();
+			_dirty = false;
+			return;
+		}
+
 		_vb->fill(_meshData.data(), _meshData.size() * sizeof(Vertex));
 		_vb->unbind();
 
 		_vertexNum = static_cast<int>(_meshData.size());
+		_dirty = false;
 	}
 
 	void Mesh::addFace(const Vertex& v1, const Vertex& v2, const Vertex& v3, bool computeFaceNormal) {
@@ -51,6 +61,7 @@ namespace avt {
 			_meshData[size - 2].normal = normal;
 			_meshData[size - 3].normal = normal;
 		}
+		_dirty = true;
 	}
 
 	void Mesh::computeFaceNormals() {
@@ -65,6 +76,7 @@ namespace avt {
 			v2.normal = normal;
 			v3.normal = normal;
 		}
+		_dirty = true;
 	}
 
 	void Mesh::computeVertexNormals(bool weighted) {
@@ -99,6 +111,7 @@ namespace avt {
 
 			current.clear();
 		}
+		_dirty = true;
 	}
 
 	void Mesh::computeMixedNormals(float threshold, bool weighted) {
@@ -144,6 +157,7 @@ namespace avt {
 
 			current.clear();
 		}
+		_dirty = true;
 	}
 
 	// OBJ LOADING

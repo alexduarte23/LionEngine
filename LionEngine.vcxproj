@@ -151,7 +151,6 @@
     <ClInclude Include="HeaderFiles\Camera.h" />
     <ClInclude Include="HeaderFiles\Engine.h" />
     <ClInclude Include="HeaderFiles\ErrorManager.h" />
-    <ClInclude Include="HeaderFiles\Geometry.h" />
     <ClInclude Include="HeaderFiles\IndexBuffer.h" />
     <ClInclude Include="HeaderFiles\Input.h" />
     <ClInclude Include="HeaderFiles\Manager.h" />
@@ -160,12 +159,13 @@
     <ClInclude Include="HeaderFiles\Mat4.h" />
     <ClInclude Include="HeaderFiles\Matrix.h" />
     <ClInclude Include="HeaderFiles\Mesh.h" />
-    <ClInclude Include="HeaderFiles\OBJLoader.h" />
     <ClInclude Include="HeaderFiles\OrthographicCamera.h" />
     <ClInclude Include="HeaderFiles\Perlin.h" />
     <ClInclude Include="HeaderFiles\PerspectiveCamera.h" />
     <ClInclude Include="HeaderFiles\Quaternion.h" />
+    <ClInclude Include="HeaderFiles\Renderable.h" />
     <ClInclude Include="HeaderFiles\Renderer.h" />
+    <ClInclude Include="HeaderFiles\RenderMesh.h" />
     <ClInclude Include="HeaderFiles\Scene.h" />
     <ClInclude Include="HeaderFiles\SceneNode.h" />
     <ClInclude Include="HeaderFiles\SceneNodeCallback.h" />

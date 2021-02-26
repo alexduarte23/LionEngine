@@ -12,24 +12,27 @@ private:
 	std::shared_ptr<avt::Shader> _shader;
 	avt::Renderer _renderer;
 	std::shared_ptr<avt::UniformBuffer> _ub;
+	std::shared_ptr<avt::Mesh> _cubeM;
+	std::shared_ptr<avt::RenderMesh> _cubeR;
 	avt::Scene _scene;
 	std::unique_ptr<avt::Camera> _cam;
 
 	bool _cursorVisible = false;
 
-	avt::SceneNode* _crosshair = nullptr;
-	std::string _activeCam = "per";
-
-	float _time = 0;
 
 	void createScene() {
 		avt::StencilPicker::enable();
 
 		// cube_vtn_flat
-		auto cubeM = new avt::Mesh("./Resources/Objects/colourscube.obj");
-		cubeM->setup();
-		cubeM->setShader(_shader);
-		_scene.addNode(cubeM);
+		_cubeM = std::make_shared<avt::Mesh>("./Resources/Objects/colourscube.obj");
+		_cubeR = std::make_shared<avt::RenderMesh>(_cubeM, _shader);
+
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				auto node = _scene.createNode(_cubeR.get());
+				node->translate({ -i*2.5f, 0, -j*2.5f });
+			}
+		}
 	}
 
 
@@ -53,8 +56,8 @@ private:
 
 		_cam.reset(new avt::PerspectiveCamera(60.f, aspect, 0.1f, 200.0f, avt::Vector3(5.f, 5.f, 5.f)));
 		_cam->lookAt({});
-		_cam->setMoveSpeed(12.f);
-		_cam->setOrbitSpeed(.45f);
+		_cam->setMoveSpeed(20.f);
+		_cam->setOrbitSpeed(.002f);
 
 		_ub = std::make_shared<avt::UniformBuffer>(2 * (long long)avt::LayoutElement::getTypeSize(avt::ShaderDataType::MAT4), 0);
 		_ub->unbind();
@@ -105,7 +108,6 @@ public:
 	void onUpdate(GLFWwindow* win, float dt) override {
 		processInput(win, dt);
 
-		_time += dt;
 		glfwSetWindowTitle(win, std::to_string((int)(1/dt)).c_str());
 	}
 

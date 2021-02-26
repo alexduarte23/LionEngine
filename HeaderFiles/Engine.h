@@ -26,6 +26,8 @@
 #include "Mesh.h"
 #include "StencilPicker.h"
 #include "Input.h"
+#include "Renderable.h"
+#include "RenderMesh.h"
 
 
 #define ERROR_CALLBACK
