@@ -13,7 +13,7 @@ namespace avt {
 			delete _root;
 		}
 
-		SceneNode* createNode(Renderable* rend = nullptr) {
+		SceneNode* createNode(const std::shared_ptr<Renderable>& rend = nullptr) {
 			return _root->createNode(rend);
 		}
 

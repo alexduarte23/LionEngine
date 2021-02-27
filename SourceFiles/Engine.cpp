@@ -64,7 +64,7 @@ namespace avt {
 
 		glfwSetWindowCloseCallback(_win, Engine::window_close_callback);
 		glfwSetWindowSizeCallback(_win, Engine::window_size_callback);
-		glfwSetInputMode(_win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(_win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		glfwSetWindowUserPointer(_win, this);
 		glfwSetKeyCallback(_win, Engine::window_key_callback);

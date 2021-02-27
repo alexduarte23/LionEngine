@@ -24,7 +24,8 @@ namespace avt {
 			{ShaderDataType::VEC3, "normal"},
 			{ShaderDataType::VEC3, "color"}
 		});
-		_vb = std::make_shared<VertexBuffer>(_meshData.data(), _meshData.size() * sizeof(Vertex), layout);
+		//_vb = std::make_shared<VertexBuffer>(_meshData.data(), _meshData.size() * sizeof(Vertex), layout);
+		_vb = std::make_shared<VertexBuffer>(_meshData, layout);
 		_vertexNum = static_cast<int>(_meshData.size());
 
 		_va = std::make_shared<VertexArray>();
@@ -42,7 +43,7 @@ namespace avt {
 			return;
 		}
 
-		_vb->fill(_meshData.data(), _meshData.size() * sizeof(Vertex));
+		_vb->upload(_meshData);
 		_vb->unbind();
 
 		_vertexNum = static_cast<int>(_meshData.size());

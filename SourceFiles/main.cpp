@@ -6,7 +6,6 @@
 #include "../HeaderFiles/Engine.h"
 
 
-
 class MyApp : public avt::App {
 private:
 	std::shared_ptr<avt::Shader> _shader;
@@ -17,11 +16,11 @@ private:
 	avt::Scene _scene;
 	std::unique_ptr<avt::Camera> _cam;
 
-	bool _cursorVisible = false;
-
+	static constexpr int FRAME_N = 30;
+	float _frames[FRAME_N] = { 0 };
 
 	void createScene() {
-		avt::StencilPicker::enable();
+		//avt::StencilPicker::enable();
 
 		// cube_vtn_flat
 		_cubeM = std::make_shared<avt::Mesh>("./Resources/Objects/colourscube.obj");
@@ -29,7 +28,7 @@ private:
 
 		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
-				auto node = _scene.createNode(_cubeR.get());
+				auto node = _scene.createNode(_cubeR);
 				node->translate({ -i*2.5f, 0, -j*2.5f });
 			}
 		}
@@ -74,9 +73,10 @@ public:
 		createCams(win);
 		createShaders();
 		createScene();
+		avt::Input::setCursorMode(avt::CursorMode::Captured);
 	}
 
-	void processInput(GLFWwindow* win, float dt) {
+	void processInput(float dt) {
 		avt::Vector3 move;
 		if (avt::Input::keyDown(avt::KeyCode::W)) move.z += 1;
 		if (avt::Input::keyDown(avt::KeyCode::S)) move.z -= 1;
@@ -86,16 +86,17 @@ public:
 		if (avt::Input::keyDown(avt::KeyCode::LeftShift)) move.y -= 1;
 		_cam->processMove(move, dt);
 
-		if (!_cursorVisible) { // free move
+		if (avt::Input::cursorMode() == avt::CursorMode::Captured) { // free move
 			_cam->processOrbit(avt::Input::mouseOffset(), dt, true);
 		} else if (avt::Input::mouseBtnDown(avt::MouseCode::BtnLeft)) { // drag move
 			_cam->processOrbit(avt::Input::mouseOffset(), dt);
 		}
 
 		if (avt::Input::keyPressed(avt::KeyCode::Escape)) {
-			_cursorVisible = !_cursorVisible;
-			if (_cursorVisible) glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			else				glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			if (avt::Input::cursorMode() == avt::CursorMode::Captured)
+				avt::Input::setCursorMode(avt::CursorMode::Normal);
+			else
+				avt::Input::setCursorMode(avt::CursorMode::Captured);
 		}
 		if (avt::Input::keyPressed(avt::KeyCode::D0)) {
 			_cam->setPosition(avt::Vector3(5.f, 5.f, 5.f));
@@ -105,10 +106,21 @@ public:
 		}
 	}
 
-	void onUpdate(GLFWwindow* win, float dt) override {
-		processInput(win, dt);
+	void displayFPS(GLFWwindow* win, float dt) {
+		float avg = 0;
+		for (int i = 0; i < FRAME_N - 1; i++) {
+			_frames[i] = _frames[i + 1];
+			avg += _frames[i];
+		}
+		_frames[FRAME_N - 1] = dt;
+		avg = (avg + dt) / (float)FRAME_N;
 
-		glfwSetWindowTitle(win, std::to_string((int)(1/dt)).c_str());
+		glfwSetWindowTitle(win, std::to_string((int)(1.f/avg)).c_str());
+	}
+
+	void onUpdate(GLFWwindow* win, float dt) override {
+		processInput(dt);
+		displayFPS(win, dt);
 	}
 
 	void onDisplay(GLFWwindow* win, float dt) override {

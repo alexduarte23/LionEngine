@@ -40,7 +40,7 @@ namespace avt {
 
 		auto& ub = camera->getUBO();
 		ub->bind();
-		ub->fill({ camera->viewMatrix(), camera->projMatrix() });
+		ub->upload({ camera->viewMatrix(), camera->projMatrix() });
 
 		drawNode(scene.getRoot(), Mat4::identity());
 
@@ -59,7 +59,7 @@ namespace avt {
 		node->afterDraw();
 	}
 
-	void Renderer::drawRenderable(Renderable* rend, const Mat4& worldMatrix) {
+	void Renderer::drawRenderable(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix) {
 		auto& mesh = rend->mesh();
 		auto& shader = rend->shader();
 

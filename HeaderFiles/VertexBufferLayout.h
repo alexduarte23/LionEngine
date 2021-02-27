@@ -28,46 +28,46 @@ namespace avt {
 
 		static GLint getTypeSize(ShaderDataType type) {
 			switch (type) {
-			case avt::ShaderDataType::FLOAT:	return 4;
-			case avt::ShaderDataType::INT:		return 4;
-			case avt::ShaderDataType::BOOL:		return 1;
-			case avt::ShaderDataType::VEC2:		return 4 * 2;
-			case avt::ShaderDataType::VEC3:		return 4 * 3;
-			case avt::ShaderDataType::VEC4:		return 4 * 4;
-			case avt::ShaderDataType::MAT2:		return 4 * 2 * 2;
-			case avt::ShaderDataType::MAT3:		return 4 * 3 * 3;
-			case avt::ShaderDataType::MAT4:		return 4 * 4 * 4;
-			default:							return 4;
+			case ShaderDataType::FLOAT:	return 4;
+			case ShaderDataType::INT:	return 4;
+			case ShaderDataType::BOOL:	return 1;
+			case ShaderDataType::VEC2:	return 4 * 2;
+			case ShaderDataType::VEC3:	return 4 * 3;
+			case ShaderDataType::VEC4:	return 4 * 4;
+			case ShaderDataType::MAT2:	return 4 * 2 * 2;
+			case ShaderDataType::MAT3:	return 4 * 3 * 3;
+			case ShaderDataType::MAT4:	return 4 * 4 * 4;
+			default:					return 4;
 			}
 		}
 
 		static GLenum getTypeEnum(ShaderDataType type) {
 			switch (type) {
-			case avt::ShaderDataType::FLOAT:	return GL_FLOAT;
-			case avt::ShaderDataType::INT:		return GL_INT;
-			case avt::ShaderDataType::BOOL:		return GL_UNSIGNED_BYTE;
-			case avt::ShaderDataType::VEC2:		return GL_FLOAT;
-			case avt::ShaderDataType::VEC3:		return GL_FLOAT;
-			case avt::ShaderDataType::VEC4:		return GL_FLOAT;
-			case avt::ShaderDataType::MAT2:		return GL_FLOAT;
-			case avt::ShaderDataType::MAT3:		return GL_FLOAT;
-			case avt::ShaderDataType::MAT4:		return GL_FLOAT;
-			default:							return GL_FLOAT;
+			case ShaderDataType::FLOAT:	return GL_FLOAT;
+			case ShaderDataType::INT:	return GL_INT;
+			case ShaderDataType::BOOL:	return GL_UNSIGNED_BYTE;
+			case ShaderDataType::VEC2:	return GL_FLOAT;
+			case ShaderDataType::VEC3:	return GL_FLOAT;
+			case ShaderDataType::VEC4:	return GL_FLOAT;
+			case ShaderDataType::MAT2:	return GL_FLOAT;
+			case ShaderDataType::MAT3:	return GL_FLOAT;
+			case ShaderDataType::MAT4:	return GL_FLOAT;
+			default:					return GL_FLOAT;
 			}
 		}
 
 		static GLint getTypeCount(ShaderDataType type) {
 			switch (type) {
-			case avt::ShaderDataType::FLOAT:	return 1;
-			case avt::ShaderDataType::INT:		return 1;
-			case avt::ShaderDataType::BOOL:		return 1;
-			case avt::ShaderDataType::VEC2:		return 2;
-			case avt::ShaderDataType::VEC3:		return 3;
-			case avt::ShaderDataType::VEC4:		return 4;
-			case avt::ShaderDataType::MAT2:		return 2; // 2 vecs
-			case avt::ShaderDataType::MAT3:		return 3; // 3 vecs
-			case avt::ShaderDataType::MAT4:		return 4; // 4 vecs
-			default:							return 1;
+			case ShaderDataType::FLOAT:	return 1;
+			case ShaderDataType::INT:	return 1;
+			case ShaderDataType::BOOL:	return 1;
+			case ShaderDataType::VEC2:	return 2;
+			case ShaderDataType::VEC3:	return 3;
+			case ShaderDataType::VEC4:	return 4;
+			case ShaderDataType::MAT2:	return 2; // 2 vecs
+			case ShaderDataType::MAT3:	return 3; // 3 vecs
+			case ShaderDataType::MAT4:	return 4; // 4 vecs
+			default:					return 1;
 			}
 		}
 	};

@@ -37,7 +37,7 @@ namespace avt {
 		void draw(const Scene& scene, Camera* camera);
 
 		void drawNode(SceneNode* node, const Mat4& worldMatrix);
-		void drawRenderable(Renderable* rend, const Mat4& worldMatrix);
+		void drawRenderable(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix);
 
 		void clear() const;
 

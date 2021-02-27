@@ -14,7 +14,7 @@ namespace avt {
 		SceneNode* _parent;
 		std::vector<SceneNode*> _nodes;
 
-		Renderable* _rend;
+		std::shared_ptr<Renderable> _rend;
 
 		//Mat4 _transform;
 
@@ -34,7 +34,7 @@ namespace avt {
 		std::vector<SceneNode*>::const_iterator end() const { return _nodes.end(); }
 
 	public:
-		SceneNode(Renderable* rend = nullptr)
+		SceneNode(const std::shared_ptr<Renderable>& rend = nullptr)
 			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0), _rend(rend)/*, _transform(Mat4::identity())*/ {}
 
 		virtual ~SceneNode() {
@@ -43,7 +43,7 @@ namespace avt {
 			}
 		}
 
-		SceneNode* createNode(Renderable* rend = nullptr) {
+		SceneNode* createNode(const std::shared_ptr<Renderable>& rend = nullptr) {
 			SceneNode* node = new SceneNode(rend);
 			_nodes.push_back(node);
 			node->setParent(this);
@@ -87,11 +87,11 @@ namespace avt {
 			return _nodes;
 		}
 
-		void setRenderable(Renderable* rend) {
+		void setRenderable(const std::shared_ptr<Renderable>& rend) {
 			_rend = rend;
 		}
 
-		Renderable* getRenderable() {
+		const std::shared_ptr<Renderable>& getRenderable() {
 			return _rend;
 		}
 

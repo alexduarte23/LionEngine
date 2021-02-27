@@ -162,11 +162,16 @@ namespace avt {
 		BtnMiddle = Btn2
 	};
 
+	enum class CursorMode {
+		Normal = GLFW_CURSOR_NORMAL, Hidden = GLFW_CURSOR_HIDDEN, Captured = GLFW_CURSOR_DISABLED
+	};
+
 	class Input {
 	private:
 		static GLFWwindow* _win;
 		static Vector2 _scrollOffset;
 		static Vector2 _mouseOffset;
+		static CursorMode _cmode;
 	
 		static std::unordered_map<KeyCode, int> _keyStates;
 		static std::unordered_map<MouseCode, int> _mouseStates;
@@ -242,6 +247,17 @@ namespace avt {
 
 		static float scrollX() {
 			return _scrollOffset.x;
+		}
+		/////
+
+		static void setCursorMode(CursorMode mode) {
+			if (!_win) return;
+			_cmode = mode;
+			glfwSetInputMode(_win, GLFW_CURSOR, static_cast<std::underlying_type<CursorMode>::type>(mode));
+		}
+
+		static CursorMode cursorMode() {
+			return _cmode;
 		}
 
 	};
