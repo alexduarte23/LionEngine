@@ -8,11 +8,9 @@
 
 class MyApp : public avt::App {
 private:
-	std::shared_ptr<avt::Shader> _shader;
+	std::shared_ptr<avt::Shader> _shader, _shader2;
 	avt::Renderer _renderer;
 	std::shared_ptr<avt::UniformBuffer> _ub;
-	std::shared_ptr<avt::Mesh> _cubeM;
-	std::shared_ptr<avt::RenderMesh> _cubeR;
 	avt::Scene _scene;
 	std::unique_ptr<avt::Camera> _cam;
 
@@ -23,12 +21,17 @@ private:
 		//avt::StencilPicker::enable();
 
 		// cube_vtn_flat
-		_cubeM = std::make_shared<avt::Mesh>("./Resources/Objects/colourscube.obj");
-		_cubeR = std::make_shared<avt::RenderMesh>(_cubeM, _shader);
+		auto mesh = std::make_shared<avt::Mesh>("./Resources/Objects/colourscube.obj");
+		auto mesh2 = std::make_shared<avt::Mesh>("./Resources/Objects/cube_vtn_flat.obj");
+		std::shared_ptr<avt::RenderMesh> rend[4];
+		rend[0] = std::make_shared<avt::RenderMesh>(mesh, _shader);
+		rend[1] = std::make_shared<avt::RenderMesh>(mesh, _shader2);
+		rend[2] = std::make_shared<avt::RenderMesh>(mesh2, _shader);
+		rend[3] = std::make_shared<avt::RenderMesh>(mesh2, _shader2);
 
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				auto node = _scene.createNode(_cubeR);
+		for (int i = 0; i < 40; i++) {
+			for (int j = 0; j < 40; j++) {
+				auto node = _scene.createNode(rend[j%4]);
 				node->translate({ -i*2.5f, 0, -j*2.5f });
 			}
 		}
@@ -41,10 +44,18 @@ private:
 		params.setVertexShader("./Resources/shaders/basic-vs.glsl")
 			.setFragmentShader("./Resources/shaders/basic-fs.glsl")
 			.addInputs({ "position", "texCoord", "normal", "color" })
-			.addUniform("ModelMatrix")
+			.useModelMatrix("ModelMatrix")
 			.addUniformBlock("CameraMatrices", 0);
 		_shader = std::make_shared<avt::Shader>(params);
+		_shader2 = std::make_shared<avt::Shader>(params);
+		
+		params.setVertexShader("./Resources/shaders/test-vs.glsl");
+		auto shaderT = std::make_shared<avt::Shader>(params);
 
+		auto& layout = _shader->getInputLayout();
+		std::cout << "GOOD: " << layout.wellFormed() << std::endl;
+		for (auto& attr : layout.getAttrs())
+			std::cout << "Name: " << attr.name << " Loaction: " << attr.location << " Count: " << attr.length << std::endl;
 	}
 
 

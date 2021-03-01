@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 #include "avt_math.h"
-#include "SceneNodeCallback.h"
 
 namespace avt {
 	class Renderable;
@@ -16,12 +15,12 @@ namespace avt {
 
 		std::shared_ptr<Renderable> _rend;
 
-		//Mat4 _transform;
+		bool _dirty = false;
+		Mat4 _localTranform;
+		Mat4 _worldTransform = Mat4::identity();
 
 		Vector3 _translation, _scale;
 		Quaternion _rot;
-
-		SceneNodeCallback* _callback;
 
 		//mouse picking
 		unsigned int _stencilIndex = 0; //0 = not selectable
@@ -35,7 +34,7 @@ namespace avt {
 
 	public:
 		SceneNode(const std::shared_ptr<Renderable>& rend = nullptr)
-			: _callback(nullptr), _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0), _rend(rend)/*, _transform(Mat4::identity())*/ {}
+			: _parent(nullptr), _translation(0, 0, 0), _scale(1.f, 1.f, 1.f), _rot({ 1.f,0,0 }, 0), _rend(rend)/*, _transform(Mat4::identity())*/ {}
 
 		virtual ~SceneNode() {
 			for (auto node : _nodes) {
@@ -46,13 +45,15 @@ namespace avt {
 		SceneNode* createNode(const std::shared_ptr<Renderable>& rend = nullptr) {
 			SceneNode* node = new SceneNode(rend);
 			_nodes.push_back(node);
-			node->setParent(this);
+			node->_parent = this;
+			node->_dirty = true;
 			return node;
 		}
 
 		SceneNode* addNode(SceneNode* node) {
 			_nodes.push_back(node);
-			node->setParent(this);
+			node->_parent = this;
+			node->_dirty = true;
 			return node;
 		}
 
@@ -108,6 +109,20 @@ namespace avt {
 			_transform *= transform;
 		}*/
 
+		const Mat4& getWorldTransform() const {
+			return _worldTransform;
+		}
+
+		void updateWorldFromParent() {
+			if (!_parent) return;
+			_worldTransform = _parent->_worldTransform * getTransform();
+			_dirty = false;
+		}
+
+		bool dirty() const {
+			return _dirty;
+		}
+
 		Mat4 getTransform() const {
 			return Mat4::translation(_translation)
 				* _rot.toMat()
@@ -116,6 +131,7 @@ namespace avt {
 
 		void setTranslation(const Vector3& v) {
 			_translation = v;
+			_dirty = true;
 		}
 
 		const Vector3& getTranslation() const {
@@ -124,10 +140,12 @@ namespace avt {
 
 		void translate(const Vector3& v) {
 			_translation += v;
+			_dirty = true;
 		}
 
 		void setScale(const Vector3& v) {
 			_scale = v;
+			_dirty = true;
 		}
 
 		const Vector3& getScale() const {
@@ -140,18 +158,22 @@ namespace avt {
 
 		void rotateX(float rad) {
 			_rot *= Quaternion({ 1.f,0,0 }, rad);
+			_dirty = true;
 		}
 
 		void rotateY(float rad) {
 			_rot *= Quaternion({ 0,1.f,0 }, rad);
+			_dirty = true;
 		}
 
 		void rotateZ(float rad) {
 			_rot *= Quaternion({ 0,0,1.f }, rad);
+			_dirty = true;
 		}
 
 		void setRotation(const Quaternion& q) {
 			_rot = q;
+			_dirty = true;
 		}
 
 		const Quaternion& getRotation() const {
@@ -160,34 +182,11 @@ namespace avt {
 
 		void rotate(const Quaternion& q) {
 			_rot *= q;
+			_dirty = true;
 		}
 
 		SceneNode* getParent() {
 			return _parent;
-		}
-
-		void setParent(SceneNode* node) {
-			_parent = node;
-		}
-
-		void setCallback(SceneNodeCallback* callback) {
-			_callback = callback;
-		}
-
-		SceneNodeCallback* getCallback() {
-			return _callback;
-		}
-
-		void beforeDraw() {
-			if (_callback) _callback->beforeDraw();
-		}
-
-		void afterDraw() {
-			if (_callback) _callback->afterDraw();
-		}
-
-		avt::Vector4 pos() {
-			return _parent->getTransform()* getTransform() * avt::Vector4(0.0f, 0.0f, 0.0f, 1.f);
 		}
 
 		void setStencilIndex(unsigned int index) { //mouse picking

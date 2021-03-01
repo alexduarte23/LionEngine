@@ -72,9 +72,6 @@
     <ClInclude Include="HeaderFiles\SceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderFiles\SceneNodeCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HeaderFiles\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -2,27 +2,114 @@
 
 #include <GL/glew.h>
 
+#include <memory>
 #include <map>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <set>
 #include <initializer_list>
 #include "avt_math.h"
-
+#include "VertexBufferLayout.h"
 
 namespace avt {
 
-	const std::string MODEL_MATRIX = "ModelMatrix";
-	const std::string NORMAL_MATRIX = "NormalMatrix";
-	const std::string VIEW_MATRIX = "ViewMatrix";
-	const std::string PROJECTION_MATRIX = "ProjectionMatrix";
+	struct ShaderInputAttr {
+		std::string name;
+		GLint location;
+		ShaderDataType type;
+		GLint length;
 
-	const std::string VERTEX_ATTRIBUTE = "inVertex";
-	const std::string NORMAL_ATTRIBUTE = "inNormal";
-	const std::string TEXCOORD_ATTRIBUTE = "inTexcoord";
-	const std::string TANGENT_ATTRIBUTE = "inTangent";
-	const std::string BITANGENT_ATTRIBUTE = "inBitangent";
+		bool operator==(const ShaderInputAttr& attr) const {
+			return name == attr.name && location == attr.location
+				&& type == attr.type && length == attr.length;
+		}
+
+		bool operator!=(const ShaderInputAttr& attr) const {
+			return !(*this == attr);
+		}
+
+		static ShaderDataType getShaderType(GLenum GLtype) {
+			switch (GLtype) {
+			case GL_FLOAT:		return ShaderDataType::FLOAT;
+			case GL_INT:		return ShaderDataType::INT;
+			case GL_BOOL:		return ShaderDataType::BOOL;
+			case GL_FLOAT_VEC2:	return ShaderDataType::VEC2;
+			case GL_FLOAT_VEC3:	return ShaderDataType::VEC3;
+			case GL_FLOAT_VEC4:	return ShaderDataType::VEC4;
+			case GL_FLOAT_MAT2:	return ShaderDataType::MAT2;
+			case GL_FLOAT_MAT3:	return ShaderDataType::MAT3;
+			case GL_FLOAT_MAT4:	return ShaderDataType::MAT4;
+			default:			return ShaderDataType::FLOAT;
+			}
+		}
+
+		static int getTypeSlots(ShaderDataType type) {
+			switch (type) {
+			case ShaderDataType::FLOAT:
+			case ShaderDataType::INT:
+			case ShaderDataType::BOOL:
+			case ShaderDataType::VEC2:
+			case ShaderDataType::VEC3:
+			case ShaderDataType::VEC4:	return 1;
+			case ShaderDataType::MAT2:	return 2;
+			case ShaderDataType::MAT3:	return 3;
+			case ShaderDataType::MAT4:	return 4;
+			default:					return 1;
+			}
+		}
+	};
+
+	class ShaderInputLayout {
+	private:
+		std::map<GLint, ShaderInputAttr> _attrs;
+	public:
+		ShaderInputLayout() {}
+
+		ShaderInputLayout(const std::initializer_list<ShaderInputAttr> inputs) {
+			for (auto& attr : inputs) _attrs.insert({ attr.location, attr });
+		}
+
+		~ShaderInputLayout() {}
+
+		void addAttr(const ShaderInputAttr& attr) {
+			_attrs.insert({ attr.location, attr });
+		}
+
+		bool wellFormed() const {
+			GLint loc = 0;
+			for (auto& attrPair : _attrs) {
+				if (attrPair.second.location != loc) return false;
+				loc += attrPair.second.length * ShaderInputAttr::getTypeSlots(attrPair.second.type);
+			}
+			return true;
+		}
+
+		std::vector<ShaderInputAttr> getAttrs() const {
+			std::vector<ShaderInputAttr> attrs;
+			for (auto& attr : _attrs) attrs.push_back(attr.second);
+			return attrs;
+		}
+
+		std::vector<std::string> getAttrNames() const {
+			std::vector<std::string> names;
+			for (auto& attr : _attrs) names.push_back(attr.second.name);
+			return names;
+		}
+
+		VertexBufferLayout toBufferLayout() const {
+
+		}
+
+		VertexBufferLayout toBufferLayout(const std::string& startAttr, unsigned int count) const {
+
+		}
+
+		VertexBufferLayout toBufferLayout(unsigned int startIndex, unsigned int count) const {
+
+		}
+	};
 
 	class ShaderParams{
 	private:
@@ -30,12 +117,14 @@ namespace avt {
 
 		std::map<std::string, GLuint> _inputs;
 		std::map<std::string, std::string> _macros;
-		std::vector<std::string> _uniforms;
+		std::set<std::string> _uniforms;
 		std::map<std::string, GLuint> _uniformBlocks;
 		std::map<std::string, GLuint> _textures;
 		std::string _vertexShader;
 		std::string _fragmentShader;
 		bool _externalSource = true;
+
+		std::string _model = "";
 
 	public:
 
@@ -57,12 +146,13 @@ namespace avt {
 		}
 
 		ShaderParams& addUniform(std::string uniform) {
-			_uniforms.push_back(uniform);
+			_uniforms.insert(uniform);
 			return *this;
 		}
 
 		ShaderParams& addUniforms(std::initializer_list<std::string> uniforms) {
-			_uniforms.insert(_uniforms.end(), uniforms.begin(), uniforms.end());
+			for (auto& uniform : uniforms)
+				_uniforms.insert(uniforms);
 			return *this;
 		}
 
@@ -111,6 +201,12 @@ namespace avt {
 			return *this;
 		}
 
+		ShaderParams& useModelMatrix(const std::string& uName = "ModelMatrix") {
+			_uniforms.insert(uName);
+			_model = uName;
+			return *this;
+		}
+
 		ShaderParams& clearInputs() {
 			_inputs.clear();
 			return *this;
@@ -147,10 +243,15 @@ namespace avt {
 	private:
 		GLuint _program;
 
+		mutable std::unique_ptr<ShaderInputLayout> _layout;
+
 		std::map<std::string, GLint> _uniforms;
+		std::string _modelUniform = "";
 
 		GLchar* parseShader(const std::string& filename);
 		unsigned int compileShader(GLenum shader_type, const std::string& source, bool external);
+
+		void computeLayout() const;
 
 	public:
 		Shader(const ShaderParams& params);
@@ -166,6 +267,16 @@ namespace avt {
 
 		void unbind() {
 			glUseProgram(0);
+		}
+
+		const ShaderInputLayout& getInputLayout() const {
+			if (!_layout) computeLayout();
+			return *_layout;
+		}
+
+		void uploadModelMatrix(const Mat4& model) {
+			if (_modelUniform.length() == 0) return;
+			uploadUniformMat4(_modelUniform, model);
 		}
 
 		void uploadUniformFloat(const std::string& uniform, float value, bool bind = false) {

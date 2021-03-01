@@ -83,6 +83,24 @@ namespace avt {
 			glUniform1i(location, tex.second);
 		}
 		glUseProgram(0);
+
+		_modelUniform = params._model;
+	}
+
+	void Shader::computeLayout() const {
+		int count = 0;
+		glGetProgramiv(_program, GL_ACTIVE_ATTRIBUTES, &count);
+
+		_layout.reset(new ShaderInputLayout());
+		GLint length, size;
+		GLenum type;
+		GLchar name[30];
+		GLint location;
+		for (int i = 0; i < count; i++) {
+			glGetActiveAttrib(_program, (GLuint)i, 30, &length, &size, &type, name);
+			location = glGetAttribLocation(_program, name);
+			_layout->addAttr({ name, location, ShaderInputAttr::getShaderType(type), size });
+		}
 	}
 
 }

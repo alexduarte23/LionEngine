@@ -1,12 +1,15 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <unordered_map>
+#include <vector>
 #include "Renderable.h"
 
 namespace avt {
 
 	class Camera;
 	class Scene;
+	class Shader;
 	class SceneNode;
 	class Mat4;
 
@@ -29,6 +32,17 @@ namespace avt {
 		bool _autoClear = true;
 		bool _clearStencil = true;
 
+		Camera* _activeCam = nullptr;
+		std::unordered_map<std::shared_ptr<Shader>, std::unordered_map<std::shared_ptr<Mesh>, std::vector<Mat4>>> _subs;
+
+		void begin(Camera* camera);
+		void end();
+		void traverse(SceneNode* node, bool dirty);
+		void submit(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix);
+		void draw();
+
+		void drawNode(SceneNode* node, bool dirty);
+		void drawRenderable(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix);
 
 	public:
 		Renderer() {}
@@ -36,8 +50,6 @@ namespace avt {
 
 		void draw(const Scene& scene, Camera* camera);
 
-		void drawNode(SceneNode* node, const Mat4& worldMatrix);
-		void drawRenderable(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix);
 
 		void clear() const;
 

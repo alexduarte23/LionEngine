@@ -168,7 +168,6 @@
     <ClInclude Include="HeaderFiles\RenderMesh.h" />
     <ClInclude Include="HeaderFiles\Scene.h" />
     <ClInclude Include="HeaderFiles\SceneNode.h" />
-    <ClInclude Include="HeaderFiles\SceneNodeCallback.h" />
     <ClInclude Include="HeaderFiles\Shader.h" />
     <ClInclude Include="HeaderFiles\StencilPicker.h" />
     <ClInclude Include="HeaderFiles\Texture.h" />
