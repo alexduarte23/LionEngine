@@ -15,7 +15,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-#include "Texture.h"
 
 namespace avt {
 
@@ -32,7 +31,6 @@ namespace avt {
 		std::vector<Vertex> _meshData;
 		std::shared_ptr<VertexBuffer> _vb;
 		std::shared_ptr<VertexArray> _va;
-		Texture* _texture = nullptr;
 
 		bool _dirty = true;
 		bool _autoUpdate = true;
@@ -63,14 +61,6 @@ namespace avt {
 		// saves memory if the mesh won't be modified again
 		void clearLocalData() {
 			_meshData.clear();
-		}
-
-		void setTexture(Texture* texture) {
-			_texture = texture;
-		}
-
-		const Texture* texture() const {
-			return _texture;
 		}
 
 		void colorAll(Vector3 color);

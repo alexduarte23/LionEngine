@@ -33,7 +33,7 @@ namespace avt {
 		bool _clearStencil = true;
 
 		Camera* _activeCam = nullptr;
-		std::unordered_map<std::shared_ptr<Shader>, std::unordered_map<std::shared_ptr<Mesh>, std::vector<Mat4>>> _subs;
+		std::unordered_map<std::shared_ptr<Material>, std::unordered_map<std::shared_ptr<Mesh>, std::vector<Mat4>>> _subs;
 
 		void begin(Camera* camera);
 		void end();

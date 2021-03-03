@@ -8,6 +8,7 @@
 #include "../HeaderFiles/UniformBuffer.h"
 #include "../HeaderFiles/VertexArray.h"
 #include "../HeaderFiles/Shader.h"
+#include "../HeaderFiles/Material.h"
 #include "../HeaderFiles/Camera.h"
 
 #include "../HeaderFiles/Scene.h"
@@ -62,14 +63,14 @@ namespace avt {
 
 	void Renderer::submit(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix) {
 		auto& mesh = rend->mesh();
-		auto& shader = rend->shader();
+		auto& material = rend->material();
 
 		if (mesh && mesh->autoBufferUpdate()) mesh->updateBufferData();
-		if (!shader || !mesh || !mesh->va()) return;
+		if (!material || !material->shader() || !mesh || !mesh->va()) return;
 
-		auto it = _subs.find(shader);
+		auto it = _subs.find(material);
 		if (it == _subs.end()) { // new shader
-			_subs.insert({ shader, {{mesh, {worldMatrix}}} });
+			_subs.insert({ material, {{mesh, {worldMatrix}}} });
 		} else { // seen shader
 			auto it2 = it->second.find(mesh);
 			if (it2 == it->second.end()) { // new mesh
@@ -81,11 +82,12 @@ namespace avt {
 	}
 
 	void Renderer::draw() {
-		for (auto& shaderGroup : _subs) {
-			auto& shader = shaderGroup.first;
-			shader->bind();
+		for (auto& materialGroup : _subs) {
+			auto& material = materialGroup.first;
+			auto& shader = material->shader();
+			material->bind(); // also binds shader
 			//std::cout << "shader: " << shader << std::endl;
-			for (auto& meshGroup : shaderGroup.second) {
+			for (auto& meshGroup : materialGroup.second) {
 				auto& mesh = meshGroup.first;
 				mesh->va()->bind();
 				//std::cout << "mesh: " << mesh << std::endl;
@@ -96,7 +98,7 @@ namespace avt {
 				//std::cout << meshGroup.second.size() << " tranforms" << std::endl;
 				mesh->va()->unbind();
 			}
-			shader->unbind();
+			material->unbind();
 		}
 	}
 
@@ -135,20 +137,22 @@ namespace avt {
 
 	void Renderer::drawRenderable(const std::shared_ptr<Renderable>& rend, const Mat4& worldMatrix) {
 		auto& mesh = rend->mesh();
-		auto& shader = rend->shader();
+		auto& material = rend->material();
+		auto& shader = material->shader();
 
 		if (mesh->autoBufferUpdate()) mesh->updateBufferData();
 		
 		auto& va = mesh->va();
-		if (!va || !shader) return;
+		if (!va || !material || !shader) return;
 
 		va->bind();
-		shader->bind();
+		material->bind(); // binds shader
+		//shader->bind();
 		shader->uploadModelMatrix(worldMatrix);
 
 		glDrawArrays(getGLdrawMode(rend->drawMode()), 0, mesh->vertexCount());
 
-		shader->unbind();
+		material->unbind();
 		va->unbind();
 	}
 

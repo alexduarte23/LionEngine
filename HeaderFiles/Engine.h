@@ -28,6 +28,7 @@
 #include "Input.h"
 #include "Renderable.h"
 #include "RenderMesh.h"
+#include "Material.h"
 
 
 #define ERROR_CALLBACK

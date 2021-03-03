@@ -157,6 +157,7 @@
     <ClInclude Include="HeaderFiles\Mat2.h" />
     <ClInclude Include="HeaderFiles\Mat3.h" />
     <ClInclude Include="HeaderFiles\Mat4.h" />
+    <ClInclude Include="HeaderFiles\Material.h" />
     <ClInclude Include="HeaderFiles\Matrix.h" />
     <ClInclude Include="HeaderFiles\Mesh.h" />
     <ClInclude Include="HeaderFiles\OrthographicCamera.h" />
