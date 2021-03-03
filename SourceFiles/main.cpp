@@ -43,7 +43,6 @@ private:
 		avt::ShaderParams params;
 		params.setVertexShader("./Resources/shaders/basic-vs.glsl")
 			.setFragmentShader("./Resources/shaders/basic-fs.glsl")
-			.addInputs({ "position", "texCoord", "normal", "color" })
 			.useModelMatrix("ModelMatrix")
 			.addUniformBlock("CameraMatrices", 0);
 		_shader = std::make_shared<avt::Shader>(params);

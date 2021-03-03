@@ -21,13 +21,8 @@ namespace avt {
 		ShaderDataType type;
 		GLint length;
 
-		bool operator==(const ShaderInputAttr& attr) const {
-			return name == attr.name && location == attr.location
-				&& type == attr.type && length == attr.length;
-		}
-
-		bool operator!=(const ShaderInputAttr& attr) const {
-			return !(*this == attr);
+		bool operator<(const ShaderInputAttr& attr) const {
+			return location < attr.location;
 		}
 
 		static ShaderDataType getShaderType(GLenum GLtype) {
@@ -63,52 +58,35 @@ namespace avt {
 
 	class ShaderInputLayout {
 	private:
-		std::map<GLint, ShaderInputAttr> _attrs;
+		std::set<ShaderInputAttr> _attrs;
 	public:
 		ShaderInputLayout() {}
 
 		ShaderInputLayout(const std::initializer_list<ShaderInputAttr> inputs) {
-			for (auto& attr : inputs) _attrs.insert({ attr.location, attr });
+			for (auto& attr : inputs) _attrs.insert(attr);
 		}
 
 		~ShaderInputLayout() {}
 
 		void addAttr(const ShaderInputAttr& attr) {
-			_attrs.insert({ attr.location, attr });
+			_attrs.insert(attr);
 		}
 
 		bool wellFormed() const {
 			GLint loc = 0;
-			for (auto& attrPair : _attrs) {
-				if (attrPair.second.location != loc) return false;
-				loc += attrPair.second.length * ShaderInputAttr::getTypeSlots(attrPair.second.type);
+			for (auto& attr : _attrs) {
+				if (attr.location != loc) return false;
+				loc += attr.length * ShaderInputAttr::getTypeSlots(attr.type);
 			}
 			return true;
 		}
 
 		std::vector<ShaderInputAttr> getAttrs() const {
 			std::vector<ShaderInputAttr> attrs;
-			for (auto& attr : _attrs) attrs.push_back(attr.second);
+			for (auto& attr : _attrs) attrs.push_back(attr);
 			return attrs;
 		}
 
-		std::vector<std::string> getAttrNames() const {
-			std::vector<std::string> names;
-			for (auto& attr : _attrs) names.push_back(attr.second.name);
-			return names;
-		}
-
-		VertexBufferLayout toBufferLayout() const {
-
-		}
-
-		VertexBufferLayout toBufferLayout(const std::string& startAttr, unsigned int count) const {
-
-		}
-
-		VertexBufferLayout toBufferLayout(unsigned int startIndex, unsigned int count) const {
-
-		}
 	};
 
 	class ShaderParams{
@@ -245,13 +223,24 @@ namespace avt {
 
 		mutable std::unique_ptr<ShaderInputLayout> _layout;
 
-		std::map<std::string, GLint> _uniforms;
+		mutable std::map<std::string, GLint> _uniforms;
 		std::string _modelUniform = "";
 
 		GLchar* parseShader(const std::string& filename);
 		unsigned int compileShader(GLenum shader_type, const std::string& source, bool external);
 
 		void computeLayout() const;
+
+		GLuint getUniformLocation(const std::string& uniform) const {
+			auto it = _uniforms.find(uniform);
+			if (it == _uniforms.end()) {
+				auto location = glGetUniformLocation(_program, uniform.c_str());
+				_uniforms.insert({ uniform, location });
+				return location;
+			} else {
+				return it->second;
+			}
+		}
 
 	public:
 		Shader(const ShaderParams& params);
@@ -280,15 +269,13 @@ namespace avt {
 		}
 
 		void uploadUniformFloat(const std::string& uniform, float value, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniform1f(location, value);
+			glUniform1f(getUniformLocation(uniform), value);
 		}
 
 		void uploadUniformInt(const std::string& uniform, int value, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniform1i(location, value);
+			glUniform1i(getUniformLocation(uniform), value);
 		}
 
 		void uploadUniformBool(const std::string& uniform, bool value, bool bind = false) {
@@ -296,39 +283,33 @@ namespace avt {
 		}
 
 		void uploadUniformVec2(const std::string& uniform, const Vector2& vec, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniform2f(location, vec.x, vec.y);
+			glUniform2f(getUniformLocation(uniform), vec.x, vec.y);
 		}
 
 		void uploadUniformVec3(const std::string& uniform, const Vector3& vec, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniform3f(location, vec.x, vec.y, vec.z);
+			glUniform3f(getUniformLocation(uniform), vec.x, vec.y, vec.z);
 		}
 
 		void uploadUniformVec4(const std::string& uniform, const Vector4& vec, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+			glUniform4f(getUniformLocation(uniform), vec.x, vec.y, vec.z, vec.w);
 		}
 
 		void uploadUniformMat2(const std::string& uniform, const Mat2& mat, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniformMatrix2fv(location, 1, GL_FALSE, mat.data());
+			glUniformMatrix2fv(getUniformLocation(uniform), 1, GL_FALSE, mat.data());
 		}
 
 		void uploadUniformMat3(const std::string& uniform, const Mat3& mat, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniformMatrix3fv(location, 1, GL_FALSE, mat.data());
+			glUniformMatrix3fv(getUniformLocation(uniform), 1, GL_FALSE, mat.data());
 		}
 
 		void uploadUniformMat4(const std::string& uniform, const Mat4& mat, bool bind = false) {
-			GLuint location = _uniforms.find(uniform)->second;
 			if (bind) this->bind();
-			glUniformMatrix4fv(location, 1, GL_FALSE, mat.data());
+			glUniformMatrix4fv(getUniformLocation(uniform), 1, GL_FALSE, mat.data());
 		}
 
 	};
